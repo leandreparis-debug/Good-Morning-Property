@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
 
 concurrency:
@@ -47,6 +47,43 @@ jobs:
       - name: Build
         run: pnpm build
 
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Local stack only. Auth (gotrue), REST (postgrest), gateway (kong) and the mail catcher
+      # (mailpit, to prove that no email is ever sent) are needed by the app.
+      - name: Start local Supabase
+        run: pnpm exec supabase start -x studio,imgproxy,vector,logflare,supavisor,realtime,storage-api,edge-runtime
+
+      - name: Reset database (migrations + seed)
+        run: pnpm db:reset
+
+      - name: Export local Supabase variables
+        run: |
+          pnpm --silent db:env \
+            | grep -E '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_ANON_KEY|SUPABASE_SERVICE_ROLE_KEY)=' \
+            | sed -E 's/^([A-Z_]+)="(.*)"$/\1=\2/' >> "$GITHUB_ENV"
+
+      - name: Build
+        run: pnpm build
+
       - name: Install Playwright (Chromium)
         run: pnpm exec playwright install --with-deps chromium
 
@@ -60,6 +97,10 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+      - name: Stop local Supabase
+        if: always()
+        run: pnpm exec supabase stop --no-backup
 
   database:
     name: database

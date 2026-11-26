@@ -10,6 +10,8 @@ export const DOMAIN_ERROR_CODES = [
   "LEAD_ALREADY_ASSIGNED",
   "LAST_FACILITATOR",
   "DUPLICATE_EMAIL",
+  "CANNOT_DEACTIVATE_SELF",
+  "NOT_FOUND",
   "INVALID_INPUT",
   "FORBIDDEN",
   "UNKNOWN",
@@ -20,19 +22,21 @@ export type DomainErrorCode = (typeof DOMAIN_ERROR_CODES)[number];
 /** French messages shown to users. */
 export const DOMAIN_ERROR_MESSAGES: Record<DomainErrorCode, string> = {
   TOPICS_LIMIT_REACHED:
-    "Vous avez déjà 5 sujets pour cette réunion : supprimez-en un pour en ajouter un autre.",
-  DUPLICATE_PRIORITY: "Vous avez déjà un sujet avec cette priorité.",
+    "Tu as déjà 5 sujets pour cette réunion : supprimes-en un pour en ajouter un autre.",
+  DUPLICATE_PRIORITY: "Tu as déjà un sujet avec cette priorité.",
   ENTRY_CLOSED: "La saisie est fermée pour cette réunion.",
   VISIT_OUTSIDE_WEEK:
-    "La date de la visite doit être comprise dans la semaine de la réunion (du lundi au dimanche).",
+    "La date doit être comprise dans la semaine de la réunion (du lundi au dimanche).",
   LEAD_ALREADY_ASSIGNED:
-    "Il y a déjà un responsable : retirez-lui ce rôle avant de le confier à quelqu'un d'autre.",
+    "Il y a déjà un responsable : retire-lui ce rôle avant de le confier à quelqu'un d'autre.",
   LAST_FACILITATOR:
-    "Il doit rester au moins un animateur actif : désignez-en un autre avant de retirer ce rôle.",
+    "Il doit rester au moins un animateur actif : désigne-en un autre avant de retirer ce rôle.",
   DUPLICATE_EMAIL: "Un membre utilise déjà cette adresse mail.",
+  CANNOT_DEACTIVATE_SELF: "Tu ne peux pas désactiver ton propre accès.",
+  NOT_FOUND: "Élément introuvable : il a peut-être été supprimé entre-temps.",
   INVALID_INPUT: "Certaines informations sont invalides.",
-  FORBIDDEN: "Vous n'avez pas les droits pour cette action, ou la saisie est fermée.",
-  UNKNOWN: "Une erreur inattendue est survenue. Réessayez dans un instant.",
+  FORBIDDEN: "Tu n'as pas les droits pour cette action, ou la saisie est fermée.",
+  UNKNOWN: "Une erreur inattendue est survenue. Réessaie dans un instant.",
 };
 
 /** A business error with a stable code and a French message. */
@@ -61,6 +65,7 @@ const HINT_TO_CODE: Record<string, DomainErrorCode> = {
   entry_closed: "ENTRY_CLOSED",
   visit_outside_meeting_week: "VISIT_OUTSIDE_WEEK",
   last_facilitator: "LAST_FACILITATOR",
+  member_not_found: "NOT_FOUND",
 };
 
 /** Unique constraints and indexes, by name (as it appears in the Postgres message). */

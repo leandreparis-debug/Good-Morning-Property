@@ -4,19 +4,24 @@ Application web qui anime le point hebdomadaire d'une équipe de cinq personnes,
 préparation courte (5 sujets maximum, tagués et priorisés), tirage au sort de l'ordre de passage,
 temps de parole chronométré, tour des visites et déplacements. Rien n'est conservé après la réunion.
 
+Pas de mot de passe ni de mail : chaque membre entre avec son **lien personnel**, que
+l'animateur crée et lui transmet depuis l'écran Équipe (`docs/auth.md`).
+
 ## Prérequis
 
 - **Node 22 LTS** (`nvm use` lit `.nvmrc`)
 - **pnpm 10** (`corepack enable` utilise la version figée dans `package.json`)
-- **Docker Desktop** à partir de l'étape 2 (Supabase en local)
+- **Docker Desktop** (Supabase tourne en local, voir `docs/local-dev.md`)
 
 ## Installation
 
 ```bash
 corepack enable
 pnpm install
-cp .env.example .env.local
+pnpm db:start && pnpm db:reset        # Supabase local + données fictives
+cp .env.example .env.local            # puis coller les valeurs de `pnpm db:env`
 pnpm dev
+pnpm local:link -- --email membre1@example.test   # lien de connexion d'un membre fictif
 ```
 
 Puis ouvrir <http://localhost:3000> (redirige vers `/mes-sujets`) et <http://localhost:3000/design>.
@@ -42,6 +47,9 @@ Première exécution des tests e2e en local : `pnpm exec playwright install chro
 - `CLAUDE.md` : contexte, conventions et règles absolues du projet
 - `docs/design.md` : direction artistique « Prairie du matin »
 - `docs/architecture.md` : structure et règles de dépendance
+- `docs/auth.md` : liens personnels et écran Équipe
+- `docs/data-model.md`, `docs/local-dev.md` : base de données, Supabase local
+- `docs/progress.md` : avancement par phase
 
 ## Crédits
 

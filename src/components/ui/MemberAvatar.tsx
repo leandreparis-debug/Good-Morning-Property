@@ -1,13 +1,16 @@
 import { cn } from "@/lib/cn";
 import { getInitials } from "@/lib/initials";
+import type { MemberColor } from "@/lib/memberColors";
 
-export type MemberColor = "sun" | "grass" | "sky" | "card" | "ink";
+export type { MemberColor } from "@/lib/memberColors";
 export type MemberAvatarSize = "sm" | "md" | "lg" | "projection";
 export type MemberStatus = "idle" | "current" | "done";
 
 export interface MemberAvatarProps {
-  /** Display name; initials are derived from it. */
+  /** Display name, used as the accessible name. */
   name: string;
+  /** Initials to show (stored on the member). Derived from `name` when absent. */
+  initials?: string;
   color?: MemberColor;
   size?: MemberAvatarSize;
   /** `current`: white 4 px ring then ink 2 px ring · `done`: 45 % opacity. */
@@ -42,6 +45,7 @@ const statusLabels: Record<MemberStatus, string> = {
  */
 export function MemberAvatar({
   name,
+  initials,
   color = "sun",
   size = "md",
   status = "idle",
@@ -61,7 +65,7 @@ export function MemberAvatar({
         className,
       )}
     >
-      <span aria-hidden>{getInitials(name)}</span>
+      <span aria-hidden>{initials ?? getInitials(name)}</span>
     </span>
   );
 }

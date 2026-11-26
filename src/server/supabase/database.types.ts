@@ -21,14 +21,14 @@ export type Database = {
                   ]
                 },"members": {
                   Row: {
-                    "avatar_color": string,"created_at": string,"display_name": string,"email": string,"id": string,"initials": string,"is_active": boolean,"is_facilitator": boolean,"is_lead": boolean,"updated_at": string,"user_id": string | null
+                    "access_token_created_at": string | null,"access_token_hash": string | null,"avatar_color": string,"created_at": string,"display_name": string,"email": string,"id": string,"initials": string,"is_active": boolean,"is_facilitator": boolean,"is_lead": boolean,"updated_at": string,"user_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "avatar_color": string,"created_at"?: string,"display_name": string,"email": string,"id"?: string,"initials": string,"is_active"?: boolean,"is_facilitator"?: boolean,"is_lead"?: boolean,"updated_at"?: string,"user_id"?: string | null
+                    "access_token_created_at"?: string | null,"access_token_hash"?: string | null,"avatar_color": string,"created_at"?: string,"display_name": string,"email": string,"id"?: string,"initials": string,"is_active"?: boolean,"is_facilitator"?: boolean,"is_lead"?: boolean,"updated_at"?: string,"user_id"?: string | null
                   }
                   Update: {
-                    "avatar_color"?: string,"created_at"?: string,"display_name"?: string,"email"?: string,"id"?: string,"initials"?: string,"is_active"?: boolean,"is_facilitator"?: boolean,"is_lead"?: boolean,"updated_at"?: string,"user_id"?: string | null
+                    "access_token_created_at"?: string | null,"access_token_hash"?: string | null,"avatar_color"?: string,"created_at"?: string,"display_name"?: string,"email"?: string,"id"?: string,"initials"?: string,"is_active"?: boolean,"is_facilitator"?: boolean,"is_lead"?: boolean,"updated_at"?: string,"user_id"?: string | null
                   }
                   Relationships: [
                     
@@ -91,7 +91,9 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            [_ in never]: never
+            "set_lead":
+{ Args: { "target_member_id": string }; Returns: undefined
+                           }
           }
           Enums: {
             "topic_tag": "INFO"|"EXCHANGE"|"DECISION"|"ALERT"

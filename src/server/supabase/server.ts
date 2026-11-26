@@ -12,7 +12,7 @@ export type ServerSupabaseClient = SupabaseClient<Database>;
  * Every query is subject to RLS. Use it in Server Components, Server Actions and Route Handlers.
  *
  * In a Server Component cookies are read-only: a token refresh can't be written back here.
- * The session refresh middleware arrives with sign-in (step 3).
+ * The session is refreshed by the middleware (src/middleware.ts).
  */
 export async function createSupabaseServerClient(): Promise<ServerSupabaseClient> {
   const cookieStore = await cookies();

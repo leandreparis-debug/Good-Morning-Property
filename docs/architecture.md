@@ -6,8 +6,8 @@
 - **TypeScript** `strict` + `noUncheckedIndexedAccess`
 - **Tailwind CSS v4**, CSS-first: tokens declared with `@theme` in `src/styles/tokens.css`
 - **Zod** for environment variables and every input
-- **Supabase** (Postgres, magic-link Auth, RLS) — local stack via the CLI, see `docs/local-dev.md`
-  and `docs/data-model.md`; **Gmail SMTP** for mail from step 3
+- **Supabase** (Postgres, Auth, RLS) — local stack via the CLI, see `docs/local-dev.md` and
+  `docs/data-model.md`. Sign-in through **personal links**, no email ever sent: `docs/auth.md`
 - Hosted on **Vercel**
 
 ## Folders
@@ -18,7 +18,7 @@ src/
   components/ui/       design-system building blocks (Button, Card, TopicTag…)
   components/layout/   app shell: header, navigation, background, credit
   lib/                 pure utilities, no I/O (env, cn, dates, topicTags, routes)
-  server/              database, mail, business logic — server only
+  server/              database, sessions, business logic — server only
     supabase/          client factories (server, browser, admin) + generated types
     repositories/      typed reads per table, through the RLS-bound server client
     errors.ts          Postgres errors → business errors (French messages)

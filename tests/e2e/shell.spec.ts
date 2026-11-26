@@ -1,43 +1,12 @@
-import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { expectNoSeriousA11yViolations } from "./support/a11y";
+import { DEMO, signInAs } from "./support/db";
 
-const PAGES = ["/design", "/mes-sujets"] as const;
-
-async function expectNoSeriousA11yViolations(page: Page): Promise<void> {
-  // The "already presented" member badge is faded to 45 % on purpose (frozen DA). Its name and
-  // status are exposed through aria-label, so the element is left out of the scan.
-  const results = await new AxeBuilder({ page })
-    .exclude('[data-status="done"]')
-    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-    .analyze();
-  const blocking = results.violations.filter(
-    (v) => v.impact === "serious" || v.impact === "critical",
-  );
-  expect(
-    blocking.map(
-      (v) => `${v.id} (${v.impact}): ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`,
-    ),
-  ).toEqual([]);
-}
-
-for (const path of PAGES) {
-  test(`${path} renders without serious accessibility violations`, async ({ page }) => {
-    await page.goto(path);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "Navigation principale" })).toBeVisible();
-    await expectNoSeriousA11yViolations(page);
-  });
-}
-
-test("/ redirects to /mes-sujets", async ({ page }) => {
-  await page.goto("/");
-  await expect(page).toHaveURL(/\/mes-sujets$/);
-});
-
-test("/design shows the background photo, its credit, the logo and the four tags", async ({
+test("/design is public and shows the photo, its credit, the logo and the four tags", async ({
   page,
 }) => {
   await page.goto("/design");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.locator('img[src*="background-hills"]')).toHaveCount(1);
   const credit = page.getByRole("link", { name: /Photo : Spencer DeMera \/ Unsplash/ });
   await expect(credit).toHaveAttribute("href", "https://unsplash.com/photos/q0lB6w0z6Ns");
@@ -45,16 +14,27 @@ test("/design shows the background photo, its credit, the logo and the four tags
   for (const label of ["Pour info", "Pour échange", "Pour décision", "Pour alerte"]) {
     await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
   }
+  await expectNoSeriousA11yViolations(page);
+});
+
+test("/mes-sujets renders for a signed-in member without serious accessibility violations", async ({
+  page,
+}) => {
+  await signInAs(page, DEMO.member);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Navigation principale" })).toBeVisible();
+  await expectNoSeriousA11yViolations(page);
 });
 
 test("the photo credit is hidden in projection mode", async ({ page }) => {
+  await signInAs(page, DEMO.facilitator);
   await page.goto("/reunion");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("link", { name: /Photo : Spencer DeMera/ })).toHaveCount(0);
 });
 
 test("header is keyboard navigable", async ({ page }) => {
-  await page.goto("/mes-sujets");
+  await signInAs(page, DEMO.member);
 
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Aller au contenu" })).toBeFocused();
@@ -66,24 +46,31 @@ test("header is keyboard navigable", async ({ page }) => {
     await page.keyboard.press("Tab");
     await expect(nav.getByRole("link", { name })).toBeFocused();
   }
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: /Mon compte/ })).toBeFocused();
 
   await expect(nav.getByRole("link", { name: "Mes sujets" })).toHaveAttribute(
     "aria-current",
     "page",
   );
+  await nav.getByRole("link", { name: "Préparation" }).focus();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/\/reunion$/);
-  await expect(nav.getByRole("link", { name: "Réunion" })).toHaveAttribute("aria-current", "page");
+  await expect(page).toHaveURL(/\/preparation$/);
+  await expect(nav.getByRole("link", { name: "Préparation" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
 });
 
 test("unknown route shows the French 404", async ({ page }) => {
+  await signInAs(page, DEMO.member);
   const response = await page.goto("/nexiste-pas");
   expect(response?.status()).toBe(404);
   await expect(page.getByRole("heading", { name: "Page introuvable" })).toBeVisible();
 });
 
 test("security headers are set", async ({ request }) => {
-  const response = await request.get("/mes-sujets");
+  const response = await request.get("/connexion");
   const headers = response.headers();
   expect(headers["x-content-type-options"]).toBe("nosniff");
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
@@ -95,8 +82,9 @@ test("security headers are set", async ({ request }) => {
 test.describe("mobile (390 px)", () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 
-  for (const path of [...PAGES, "/reunion"]) {
+  for (const path of ["/mes-sujets", "/preparation", "/reunion", "/equipe", "/design"]) {
     test(`${path} has no horizontal scroll`, async ({ page }) => {
+      await signInAs(page, DEMO.facilitator);
       await page.goto(path);
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       const { scrollWidth, clientWidth } = await page.evaluate(() => ({
@@ -108,14 +96,9 @@ test.describe("mobile (390 px)", () => {
   }
 
   test("navigation sits at the bottom of the screen", async ({ page }) => {
-    await page.goto("/mes-sujets");
+    await signInAs(page, DEMO.member);
     const box = await page.getByRole("navigation", { name: "Navigation principale" }).boundingBox();
     expect(box).not.toBeNull();
     expect((box?.y ?? 0) + (box?.height ?? 0)).toBeGreaterThan(844 - 24);
-  });
-
-  test("/mes-sujets has no serious accessibility violations", async ({ page }) => {
-    await page.goto("/mes-sujets");
-    await expectNoSeriousA11yViolations(page);
   });
 });
