@@ -23,7 +23,7 @@ Stepper « 1. La roue · 2. Tours de parole · 3. Visites ».
    presented, to come.
    - **Timer** (`src/lib/speakingTimer.ts`, timestamps, no drift): 10:00, +1 / +2 / +4 min,
      pause / resume, next. Progress bar `hill`, `sun` in the last minute. At 0: the card turns
-     `ember` with a pulsing halo (static with reduced motion), « TEMPS DÉPASSÉ », three short
+     `ember` (ink text, 4.86:1) with a pulsing halo (static with reduced motion), « TEMPS DÉPASSÉ », three short
      beeps (Web Audio, no file), and the counter keeps going in overtime (« +01:15 »). Nothing
      blocks the animateur.
    - Main button « Suivant : Prénom », then « Passer aux visites ».

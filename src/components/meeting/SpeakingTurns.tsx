@@ -293,10 +293,7 @@ function TimerCard({ view }: { view: ReturnType<typeof timerView> }) {
         {view.display}
       </p>
       <div
-        className={cn(
-          "h-4 overflow-hidden rounded-full",
-          view.overtime ? "bg-white/30" : "bg-mist",
-        )}
+        className={cn("h-4 overflow-hidden rounded-full", view.overtime ? "bg-ink/20" : "bg-mist")}
         role="progressbar"
         aria-label="Temps écoulé"
         aria-valuemin={0}
@@ -306,7 +303,7 @@ function TimerCard({ view }: { view: ReturnType<typeof timerView> }) {
         <div
           className={cn(
             "h-full rounded-full",
-            view.overtime ? "bg-white" : view.lastMinute ? "bg-sun" : "bg-hill",
+            view.overtime ? "bg-ink" : view.lastMinute ? "bg-sun" : "bg-hill",
           )}
           style={{ width: `${view.progress * 100}%` }}
         />
