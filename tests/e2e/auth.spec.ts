@@ -37,7 +37,7 @@ test("a regenerated link replaces the old one", async ({ page }) => {
 
   await page.goto(oldLink);
   await expect(page).toHaveURL(/\/connexion\?raison=lien-invalide$/);
-  await expect(page.getByRole("alert")).toHaveText(INVALID);
+  await expect(page.getByRole("main").getByRole("alert")).toHaveText(INVALID);
 
   await page.goto(newLink);
   await expect(page).toHaveURL(/\/mes-sujets$/);
@@ -47,7 +47,7 @@ test("an unknown or malformed link gets the same message", async ({ page }) => {
   for (const path of ["/l/nimporte-quoi", `/l/${"A".repeat(43)}`]) {
     await page.goto(path);
     await expect(page).toHaveURL(/\/connexion\?raison=lien-invalide$/);
-    await expect(page.getByRole("alert")).toHaveText(INVALID);
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(INVALID);
   }
 });
 
@@ -60,7 +60,7 @@ test("a deactivated member is refused, and loses an open session", async ({ page
 
     const link = await issueLink(DEMO.member5);
     await page.goto(link);
-    await expect(page.getByRole("alert")).toHaveText(INVALID);
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(INVALID);
   } finally {
     await setMemberActive(DEMO.member5, true);
   }

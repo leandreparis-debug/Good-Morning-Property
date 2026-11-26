@@ -1,7 +1,7 @@
 "use client";
 
 import { KeyRound, Pencil, Power, UserPlus } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   addMemberAction,
   regenerateLinkAction,
@@ -43,6 +43,48 @@ type Panel =
 
 function firstName(displayName: string): string {
   return displayName.split(" ")[0] ?? displayName;
+}
+
+/**
+ * Role checkbox with an optimistic state: it flips at once and flips back if the server
+ * refuses (e.g. removing the last animateur).
+ */
+function RoleToggle({
+  label,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  checked: boolean;
+  onToggle: (value: boolean) => Promise<boolean>;
+}) {
+  const [value, setValue] = useState(checked);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setValue(checked);
+  }, [checked]);
+
+  return (
+    <label className="flex min-h-11 items-center gap-3 font-medium">
+      <input
+        type="checkbox"
+        className="size-5 accent-ink"
+        checked={value}
+        aria-busy={busy || undefined}
+        onChange={(event) => {
+          const next = event.target.checked;
+          setValue(next);
+          setBusy(true);
+          void onToggle(next).then((ok) => {
+            if (!ok) setValue(!next);
+            setBusy(false);
+          });
+        }}
+      />
+      {label}
+    </label>
+  );
 }
 
 /** Badge « Animateur » (sun) or « Responsable » (ink). */
@@ -97,6 +139,14 @@ export function TeamBoard({
       const result = await action();
       setNotice(result.ok ? success : result.error);
     });
+  }
+
+  /** Runs a toggle action; resolves to false (and shows the message) if refused. */
+  async function toggle(action: () => Promise<ActionResult>, success: string): Promise<boolean> {
+    setNotice(null);
+    const result = await action();
+    setNotice(result.ok ? success : result.error);
+    return result.ok;
   }
 
   const active = members.filter((m) => m.isActive);
@@ -168,42 +218,30 @@ export function TeamBoard({
 
                 {member.isActive && (
                   <div className="flex flex-col gap-2 border-t border-line pt-4">
-                    <label className="flex min-h-11 items-center gap-3 font-medium">
-                      <input
-                        type="checkbox"
-                        className="size-5 accent-ink"
-                        checked={member.isFacilitator}
-                        disabled={pending}
-                        onChange={(event) => {
-                          const value = event.target.checked;
-                          runInline(
-                            () => setFacilitatorAction(member.id, value),
-                            value
-                              ? `${member.displayName} est maintenant animateur.`
-                              : `${member.displayName} n'est plus animateur.`,
-                          );
-                        }}
-                      />
-                      Animateur
-                    </label>
-                    <label className="flex min-h-11 items-center gap-3 font-medium">
-                      <input
-                        type="checkbox"
-                        className="size-5 accent-ink"
-                        checked={member.isLead}
-                        disabled={pending}
-                        onChange={(event) => {
-                          const value = event.target.checked;
-                          runInline(
-                            () => setLeadAction(value ? member.id : null),
-                            value
-                              ? `${member.displayName} est maintenant responsable.`
-                              : "Plus personne n'est responsable.",
-                          );
-                        }}
-                      />
-                      Responsable
-                    </label>
+                    <RoleToggle
+                      label="Animateur"
+                      checked={member.isFacilitator}
+                      onToggle={(value) =>
+                        toggle(
+                          () => setFacilitatorAction(member.id, value),
+                          value
+                            ? `${member.displayName} est maintenant animateur.`
+                            : `${member.displayName} n'est plus animateur.`,
+                        )
+                      }
+                    />
+                    <RoleToggle
+                      label="Responsable"
+                      checked={member.isLead}
+                      onToggle={(value) =>
+                        toggle(
+                          () => setLeadAction(value ? member.id : null),
+                          value
+                            ? `${member.displayName} est maintenant responsable.`
+                            : "Plus personne n'est responsable.",
+                        )
+                      }
+                    />
                   </div>
                 )}
 

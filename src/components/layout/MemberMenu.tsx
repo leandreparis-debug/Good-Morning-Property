@@ -47,12 +47,12 @@ export function MemberMenu({ displayName, initials, avatarColor, roles }: Member
         type="button"
         aria-expanded={open}
         aria-controls={menuId}
-        aria-label={`Mon compte : ${displayName}`}
         onClick={() => {
           setOpen((value) => !value);
         }}
         className="grid size-12 place-items-center rounded-full"
       >
+        <span className="sr-only">Mon compte : </span>
         <MemberAvatar name={displayName} initials={initials} color={avatarColor} />
       </button>
 
