@@ -116,5 +116,5 @@ colour **and** icon **and** label.
 ## Roadmap
 
 Phases (one PR each, see `docs/progress.md`): A step 2 merged ✅ · B personal links & Team ✅ ·
-C meeting calendar ✅ · D topic entry ✅ · E visit entry · F preparation · G attendance & wheel ·
+C meeting calendar ✅ · D topic entry ✅ · E visit entry ✅ · F preparation · G attendance & wheel ·
 H speaking turns, timer & visits · I design & a11y polish · J checks & go-live prep.

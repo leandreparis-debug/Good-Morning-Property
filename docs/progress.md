@@ -26,3 +26,9 @@ Merged: [PR #5](https://github.com/leandreparis-debug/Good-Morning-Property/pull
 `/mes-sujets`: greeting, tabs, topic cards, sheet with tag radio pills and counters, reorder by
 buttons and drag and drop (`reorder_topics`, one transaction), delete + compaction, read-only after
 the deadline, optimistic updates. Attention: drag and drop is an extra; the buttons are the reference.
+Merged: [PR #6](https://github.com/leandreparis-debug/Good-Morning-Property/pull/6). Ids are validated with `z.guid()` (seed ids are not RFC 4122).
+
+## E · Visit entry
+
+« Visites » tab: list by date, add / edit / delete, date limited to the meeting week (client,
+server and trigger), read-only after the deadline, optimistic updates.

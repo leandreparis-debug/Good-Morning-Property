@@ -21,7 +21,17 @@ Two tabs (WAI-ARIA tabs, ←/→): « Sujets n/5 » and « Visites n ».
 - After the deadline: read-only, banner « Saisie fermée », no buttons. An action sent anyway is
   refused by the server (`ENTRY_CLOSED`) and by the database (RLS + trigger).
 
-## Server (`src/server/topics/topicService.ts`)
+## Visits and trips
+
+- « Visites » tab: list by date (« mardi 1er décembre · Lyon · Visite du site X »), add, edit,
+  delete (confirmation). No limit on count.
+- The date picker (`<input type="date">`) is limited to the meeting week (Monday → Sunday,
+  `min` / `max`); the client schema (`src/lib/visitInput.ts`), the server
+  (`src/server/visits/visitService.ts`, `VISIT_OUTSIDE_WEEK`) and the database trigger
+  `visits_in_meeting_week` refuse any other date.
+- Same entry window and same read-only mode after the deadline as topics.
+
+## Server (`src/server/topics/topicService.ts`, `src/server/visits/visitService.ts`)
 
 Every write: `requireOpenEntry()` (session, current meeting, app clock before the stored
 deadline) → Zod (`src/lib/topicInput.ts`) → RLS-bound client → row count check
