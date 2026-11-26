@@ -115,8 +115,9 @@ number of affected rows (steps 5–6).
 
 `supabase/tests/database/*.test.sql` (pgTAP, `pnpm test:db`): constraints and triggers,
 visibility per role and per deadline, writes before/after the deadline and for another
-member, inactive members, users without a member profile, anonymous users. Fixtures are
-fictitious and rolled back.
+member, inactive members, users without a member profile, anonymous users; plus schema-level
+checks (RLS enabled on every `public` table, no `anon` privilege, immutable columns, pinned
+`search_path` on security definer helpers). Fixtures are fictitious and rolled back.
 
 ## Demo data
 
