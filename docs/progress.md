@@ -32,3 +32,10 @@ Merged: [PR #6](https://github.com/leandreparis-debug/Good-Morning-Property/pull
 
 « Visites » tab: list by date, add / edit / delete, date limited to the meeting week (client,
 server and trigger), read-only after the deadline, optimistic updates.
+Merged: [PR #7](https://github.com/leandreparis-debug/Good-Morning-Property/pull/7).
+
+## F · Preparation
+
+`meeting_fill_status` (counts only, active members), `/preparation`: who filled what, sun card
+(n/5, topics, planned duration), reminder link for animateurs, folded content for the lead.
+Attention: non-lead pages never fetch content (checked on the raw server response).

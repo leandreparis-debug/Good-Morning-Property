@@ -121,6 +121,7 @@ number of affected rows (`.select()` after `update`/`delete`).
 | Function                                  | Rights                                             | Purpose                                                                                                                 |
 | ----------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `set_lead(target_member_id)`              | animateurs (security invoker)                      | move the responsable role atomically                                                                                    |
+| `meeting_fill_status(meeting_id)`         | active members (security definer)                  | counts per active member: topics, visits, alerts — never any content                                                    |
 | `reorder_topics(meeting_id, ordered_ids)` | the member, before the deadline (security invoker) | rewrite priorities 1..n in the given order (P0001 `invalid_topic_order` if the list is not exactly the member's topics) |
 
 ## Tests
