@@ -46,3 +46,10 @@ Merged: [PR #8](https://github.com/leandreparis-debug/Good-Morning-Property/pull
 `/reunion` (animateurs, closed before Monday 10:00): attendance, SVG wheel, whole order drawn once
 (Fisher–Yates + `crypto.getRandomValues`), 3.6 s spin (none with reduced motion), redraw, state in
 localStorage. Attention: nothing is written to the database; audio is unlocked by the draw click.
+Merged: [PR #9](https://github.com/leandreparis-debug/Good-Morning-Property/pull/9).
+
+## H · Speaking turns, timer and visits
+
+Turn screen (topics by priority, badges row), timestamp-based timer (+1/+2/+4, pause, overtime in
+ember with halo and 3 Web Audio beeps), shortcuts (Space, →, 1/2/4), visits round, « Bonne semaine ! ».
+Attention: the sound needs the « Lancer la roue » click (browser autoplay rules).
