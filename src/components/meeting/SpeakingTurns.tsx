@@ -273,7 +273,8 @@ function TimerCard({ view }: { view: ReturnType<typeof timerView> }) {
       className={cn(
         "flex flex-col gap-4 rounded-card p-8 shadow-card transition-colors",
         view.overtime
-          ? "bg-ember text-white motion-safe:animate-[ember-halo_1.6s_ease-in-out_infinite]"
+          ? // ink on ember: 4.86:1 (white would only reach 3.62:1, too low for the label)
+            "bg-ember text-ink motion-safe:animate-[ember-halo_1.6s_ease-in-out_infinite]"
           : "bg-card text-ink",
       )}
     >
