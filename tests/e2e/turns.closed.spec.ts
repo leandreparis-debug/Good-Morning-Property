@@ -78,10 +78,10 @@ test("turn screen: topics by priority, timer, minutes, overrun, pause", async ({
   await page.keyboard.press("4");
   await expect(timer(page)).toHaveText("03:35");
 
-  // A reload keeps the turn and the timer.
+  // A reload keeps the turn and the timer (the simulated clock keeps flowing meanwhile).
   await page.reload();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Membre Démo 4");
-  await expect(timer(page)).toHaveText("03:35");
+  await expect(timer(page)).toHaveText(/^0[23]:\d\d$/);
 });
 
 test("next speakers, visits round, then the end", async ({ page }) => {

@@ -84,6 +84,8 @@ test("editing and deleting a visit", async ({ page }) => {
     .getByRole("button", { name: "Supprimer", exact: true })
     .click();
   await expect(page.getByText("Aucune visite ni aucun déplacement prévus.")).toBeVisible();
+  // Wait for the server round trip (the tab counter is refreshed from the server) before reloading.
+  await expect(page.getByRole("tab", { name: "Visites 0" })).toBeVisible();
   await page.reload();
   await expect(page.getByRole("tab", { name: "Visites 0" })).toBeVisible();
 });
