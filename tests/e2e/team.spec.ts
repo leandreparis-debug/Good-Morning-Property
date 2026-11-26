@@ -44,7 +44,7 @@ test("a facilitator adds a member, copies their link, and the link works", async
   // Regenerating the link kills the old one.
   const card = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name }) });
   await card.getByRole("button", { name: /Régénérer le lien/ }).click();
-  await page.getByRole("button", { name: "Générer le lien" }).click();
+  await page.getByRole("button", { name: "Générer le lien", exact: true }).click();
   await expect(page.getByText("Ce lien ne sera plus affiché")).toBeVisible();
   await page.getByRole("button", { name: "Terminé" }).click();
 
@@ -55,7 +55,7 @@ test("a facilitator adds a member, copies their link, and the link works", async
 
   // Deactivation closes the newcomer's session.
   await card.getByRole("button", { name: /Désactiver/ }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Désactiver" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Désactiver", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText(`${name} est désactivé.`);
   await newcomer.goto("/preparation");
   // Banned account: no session at all (or an inactive one) — either way, back to /connexion.
