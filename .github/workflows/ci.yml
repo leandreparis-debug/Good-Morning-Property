@@ -81,6 +81,9 @@ jobs:
             | grep -E '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_ANON_KEY|SUPABASE_SERVICE_ROLE_KEY)=' \
             | sed -E 's/^([A-Z_]+)="(.*)"$/\1=\2/' >> "$GITHUB_ENV"
 
+      - name: Integration tests (local stack)
+        run: pnpm test:integration
+
       - name: Build
         run: pnpm build
 
