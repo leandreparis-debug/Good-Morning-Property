@@ -89,16 +89,16 @@ Form fields are never under 16 px (no zoom on iOS).
 
 ## Components (`src/components/ui/`)
 
-| Component      | Variants / props                                                                                                                        |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `Button`       | `variant` primary · secondary · soft; `size` md · projection; `icon`; `loading` (→ `aria-busy`, disabled); `disabled`                   |
-| `Card`         | `variant` default · veiled · sun; `size` md · projection; `as`                                                                          |
-| `TopicTag`     | `tag` INFO · EXCHANGE · DECISION · ALERT; `size` sm · md · projection                                                                   |
-| `MemberAvatar` | `name`, `color`, `size` sm · md · lg · projection; `status` idle · current (4 px white ring then 2 px `ink` ring) · done (45 % opacity) |
-| `Eyebrow`      | `tone` card (`muted`) · sky (`ink-soft`); `size`                                                                                        |
-| `DisplayTitle` | `italic` word; `as` h1 · h2 · h3 · p; `size` md · projection                                                                            |
-| `Field`        | `label`, `hint`, `error` — wired with `aria-describedby`, `aria-invalid`                                                                |
-| `Logo`         | `withWordmark`, `size`                                                                                                                  |
+| Component      | Variants / props                                                                                                                                                                                    |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`       | `variant` primary · secondary · soft; `size` md · projection; `icon`; `loading` (→ `aria-busy`, disabled); `disabled`                                                                               |
+| `Card`         | `variant` default · veiled · sun; `size` md · projection; `as`                                                                                                                                      |
+| `TopicTag`     | `tag` INFO · EXCHANGE · DECISION · ALERT; `size` sm · md · projection                                                                                                                               |
+| `MemberAvatar` | `name`, `color`, `size` sm · md · lg · projection; `status` idle · current (4 px white ring then 2 px `ink` ring) · done (`mist` background, `ink-soft` initials, small `hill` check — AA contrast) |
+| `Eyebrow`      | `tone` card (`muted`) · sky (`ink-soft`); `size`                                                                                                                                                    |
+| `DisplayTitle` | `italic` word; `as` h1 · h2 · h3 · p; `size` md · projection                                                                                                                                        |
+| `Field`        | `label`, `hint`, `error` — wired with `aria-describedby`, `aria-invalid`                                                                                                                            |
+| `Logo`         | `withWordmark`, `size`                                                                                                                                                                              |
 
 Class names are merged with `cn()` (`src/lib/cn.ts`, clsx + tailwind-merge).
 
@@ -142,3 +142,31 @@ Favicon: `src/app/icon.svg` (same drawing).
 - Timer overrun turns the card `ember` with a pulsing halo and a short sound, without
   blocking the facilitator.
 - Projection mode = the meeting screen (`/reunion`): `projection` sizes, no photo credit.
+
+## Screen states
+
+- **Loading** (`src/app/loading.tsx`): skeleton of the screen (overline, title, cards), pulsing
+  only without reduced motion, announced as « Chargement ».
+- **Error** (`src/app/error.tsx`): « Petit souci » in French, « Réessayer » and « Retour à mes
+  sujets »; technical details stay in the server logs.
+- **404** (`src/app/not-found.tsx`): « Page introuvable », own title.
+- **Empty states**: « Aucun sujet pour lundi. Cinq maximum, l'essentiel d'abord. », « Aucune visite
+  ni aucun déplacement prévus. », « Rien pour l'instant », « Rien à signaler cette semaine »,
+  « Pas de déplacement prévu ».
+
+## Accessibility checklist (checked by the e2e suite)
+
+- axe (WCAG 2.1 A/AA): no `serious` or `critical` violation on every screen — **no exclusion**.
+- No horizontal scroll at 390, 768, 1440 and 1920 px; every screen has its own `<title>`.
+- Full keyboard use: skip link, header, tabs (←/→), sheets (`<dialog>`: focus trap, Escape),
+  reorder buttons, meeting shortcuts (Space, →, 1/2/4).
+- `prefers-reduced-motion`: no wheel spin, no pulsing halo, no skeleton pulse.
+- Colour is never alone: tags (colour + icon + label), status pill (dot + text), timer states
+  (colour + « TEMPS DÉPASSÉ » + digits).
+- Measured contrasts: `ink-soft` on `mist` 8.28 (done badge), `ink` on `ember` 4.86 (overtime
+  card), white on `hill` 4.76 (done check).
+
+## Reference screenshots
+
+`docs/screenshots/` (fictitious data), generated by the e2e suite with `SCREENSHOTS=1`
+(`tests/e2e/screenshots.*.spec.ts`, also uploaded as a CI artifact).

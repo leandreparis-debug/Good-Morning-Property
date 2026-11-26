@@ -53,3 +53,10 @@ Merged: [PR #9](https://github.com/leandreparis-debug/Good-Morning-Property/pull
 Turn screen (topics by priority, badges row), timestamp-based timer (+1/+2/+4, pause, overtime in
 ember with halo and 3 Web Audio beeps), shortcuts (Space, →, 1/2/4), visits round, « Bonne semaine ! ».
 Attention: the sound needs the « Lancer la roue » click (browser autoplay rules).
+Merged: [PR #10](https://github.com/leandreparis-debug/Good-Morning-Property/pull/10).
+
+## I · Design and accessibility polish
+
+AA « already presented » badge (mist, ink-soft, check) and the axe exclusion removed; loading
+skeleton, French error page, 404 title; breakpoints 390–1920, unique titles; reference screenshots.
+Attention: overtime card text is ink on ember (white was 3.62:1).
