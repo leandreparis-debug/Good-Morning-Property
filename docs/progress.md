@@ -39,3 +39,10 @@ Merged: [PR #7](https://github.com/leandreparis-debug/Good-Morning-Property/pull
 `meeting_fill_status` (counts only, active members), `/preparation`: who filled what, sun card
 (n/5, topics, planned duration), reminder link for animateurs, folded content for the lead.
 Attention: non-lead pages never fetch content (checked on the raw server response).
+Merged: [PR #8](https://github.com/leandreparis-debug/Good-Morning-Property/pull/8).
+
+## G · Meeting: attendance and wheel
+
+`/reunion` (animateurs, closed before Monday 10:00): attendance, SVG wheel, whole order drawn once
+(Fisher–Yates + `crypto.getRandomValues`), 3.6 s spin (none with reduced motion), redraw, state in
+localStorage. Attention: nothing is written to the database; audio is unlocked by the draw click.
