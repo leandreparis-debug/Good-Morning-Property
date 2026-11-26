@@ -13,13 +13,18 @@ permissions:
   contents: read
 
 jobs:
-  ci:
+  app:
+    name: ci
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       NEXT_TELEMETRY_DISABLED: "1"
-      # Non-secret placeholder: lets the build validate the environment (src/lib/env.ts).
+      # Non-secret placeholders: they let the build validate the environment (src/lib/env.ts).
+      # No job here talks to a hosted Supabase project.
       NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-role-key
     steps:
       - uses: actions/checkout@v4
 
@@ -55,3 +60,50 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  database:
+    name: database
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Local stack only (Docker on the runner). Services the database tests don't need
+      # are left out to keep the job fast.
+      - name: Start local Supabase
+        run: pnpm exec supabase start -x studio,imgproxy,vector,logflare,supavisor,realtime,storage-api,edge-runtime
+
+      - name: Reset database (migrations + seed)
+        run: pnpm db:reset
+
+      - name: Lint database
+        run: pnpm exec supabase db lint --local --level warning --fail-on error
+
+      - name: pgTAP tests
+        run: pnpm test:db
+
+      - name: Generated types are up to date
+        run: |
+          pnpm db:types
+          git diff --exit-code src/server/supabase/database.types.ts
+
+      - name: Local env helper prints the expected variables
+        run: |
+          out="$(pnpm --silent db:env)"
+          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY; do
+            grep -q "^${name}=" <<<"$out" || { echo "::error::db:env does not print ${name}"; exit 1; }
+          done
+
+      - name: Stop local Supabase
+        if: always()
+        run: pnpm exec supabase stop --no-backup
