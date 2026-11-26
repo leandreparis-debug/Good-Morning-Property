@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { EntryTabs } from "@/components/entries/EntryTabs";
 import { TopicBoard } from "@/components/entries/TopicBoard";
+import { VisitBoard } from "@/components/entries/VisitBoard";
 import { LinkButton } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { DisplayTitle } from "@/components/ui/DisplayTitle";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { greetingFor } from "@/lib/greeting";
@@ -54,9 +54,16 @@ export default async function MyTopicsPage() {
               key: "visites",
               label: `Visites ${visits.length}`,
               panel: (
-                <Card variant="veiled">
-                  <p className="font-semibold">Bientôt disponible</p>
-                </Card>
+                <VisitBoard
+                  entryOpen={entryOpen}
+                  meetingDate={meeting.meetingDate}
+                  initialVisits={visits.map(({ id, visitDate, place, purpose }) => ({
+                    id,
+                    visitDate,
+                    place,
+                    purpose,
+                  }))}
+                />
               ),
             },
           ]}
