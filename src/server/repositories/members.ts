@@ -1,6 +1,5 @@
 import "server-only";
-import { z } from "zod";
-import type { MemberColor } from "@/components/ui/MemberAvatar";
+import { memberColorSchema, type MemberColor } from "@/lib/memberColors";
 import { toDomainError } from "@/server/errors";
 import type { Tables } from "@/server/supabase/database.types";
 import { createSupabaseServerClient } from "@/server/supabase/server";
@@ -17,12 +16,11 @@ export interface Member {
   isActive: boolean;
 }
 
-const avatarColorSchema = z.enum(["sun", "grass", "sky", "card", "ink"]);
-
-const MEMBER_COLUMNS =
+/** Columns readable by API users (never the access token columns). */
+export const MEMBER_COLUMNS =
   "id, email, display_name, initials, avatar_color, is_facilitator, is_lead, is_active" as const;
 
-type MemberRow = Pick<
+export type MemberRow = Pick<
   Tables<"members">,
   | "id"
   | "email"
@@ -34,13 +32,14 @@ type MemberRow = Pick<
   | "is_active"
 >;
 
-function toMember(row: MemberRow): Member {
+/** Maps a database row to a {@link Member}. */
+export function toMember(row: MemberRow): Member {
   return {
     id: row.id,
     email: row.email,
     displayName: row.display_name,
     initials: row.initials,
-    avatarColor: avatarColorSchema.parse(row.avatar_color),
+    avatarColor: memberColorSchema.parse(row.avatar_color),
     isFacilitator: row.is_facilitator,
     isLead: row.is_lead,
     isActive: row.is_active,

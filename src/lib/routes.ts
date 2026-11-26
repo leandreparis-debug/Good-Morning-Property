@@ -1,4 +1,4 @@
-import { ClipboardList, NotebookPen, Presentation, type LucideIcon } from "lucide-react";
+import { ClipboardList, NotebookPen, Presentation, Users, type LucideIcon } from "lucide-react";
 
 /** App routes (French, kebab-case). */
 export const ROUTES = {
@@ -23,6 +23,9 @@ export const MAIN_NAV: readonly NavItem[] = [
   { href: ROUTES.preparation, label: "Préparation", icon: ClipboardList },
   { href: ROUTES.meeting, label: "Réunion", icon: Presentation },
 ];
+
+/** Team management, shown to animateurs only. */
+export const TEAM_NAV_ITEM: NavItem = { href: ROUTES.team, label: "Équipe", icon: Users };
 
 /** True when `pathname` is `href` or one of its sub-pages. */
 export function isActivePath(pathname: string, href: string): boolean {

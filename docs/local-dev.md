@@ -25,13 +25,13 @@ pnpm dev
 
 ## Local URLs
 
-| Service                                                          | URL                                                       |
-| ---------------------------------------------------------------- | --------------------------------------------------------- |
-| App                                                              | <http://localhost:3000>                                   |
-| Supabase API                                                     | <http://127.0.0.1:54321>                                  |
-| Supabase Studio (tables, RLS, SQL)                               | <http://127.0.0.1:54323>                                  |
-| Mail catcher (Mailpit, formerly Inbucket): magic links land here | <http://127.0.0.1:54324>                                  |
-| Postgres                                                         | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
+| Service                                                                                 | URL                                                       |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| App                                                                                     | <http://localhost:3000>                                   |
+| Supabase API                                                                            | <http://127.0.0.1:54321>                                  |
+| Supabase Studio (tables, RLS, SQL)                                                      | <http://127.0.0.1:54323>                                  |
+| Mail catcher (Mailpit, formerly Inbucket): must stay **empty** (the app sends no email) | <http://127.0.0.1:54324>                                  |
+| Postgres                                                                                | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
 
 Realtime, Storage, Edge Functions and Analytics are disabled in `supabase/config.toml`
 (the app doesn't use them).
@@ -58,8 +58,16 @@ Realtime, Storage, Edge Functions and Analytics are disabled in `supabase/config
 
 ## Signing in locally
 
-The seed creates the accounts `membre1@example.test` … `membre5@example.test` (fictitious).
-Sign-in by magic link arrives in step 3; the email will show up in Mailpit.
+The seed creates the members `membre1@example.test` … `membre5@example.test` (fictitious;
+1 = animateur, 2 = responsable). Print a personal link for one of them, then open it:
+
+```bash
+pnpm local:link -- --email membre1@example.test
+```
+
+The script refuses to run against anything but the local stack. On an empty database, create
+the first animateur with `pnpm bootstrap:facilitator -- --name "Prénom Nom"` instead.
+How links work: `docs/auth.md`.
 
 ## Without Docker (cloud sessions)
 

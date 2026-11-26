@@ -17,15 +17,17 @@ topics never came up. The app enforces short preparation and limited speaking ti
   facilitator can add 1, 2 or 4 min. When time is up, a visual and audible alert fires
   without cutting anyone off. The meeting ends with the visits/trips round.
   **Nothing is stored after the meeting** (no minutes).
-- **Friday 4 pm reminder email** to members who haven't entered anything yet.
+- **No email, ever.** Each member signs in with a **personal secret link** `/l/<token>`;
+  animateurs create, copy and regenerate links on the **Équipe** screen and hand them over
+  themselves (Teams…). See `docs/auth.md`.
 
 ## Stack
 
 Next.js 15 (App Router, RSC by default, Server Actions) · React 19 · TypeScript strict
 (+ `noUncheckedIndexedAccess`) · Tailwind CSS v4 CSS-first (`@theme`) · Zod · lucide-react ·
 clsx + tailwind-merge · Vitest + Testing Library + jsdom · Playwright + axe · pnpm · Node 22.
-Supabase (Postgres, magic-link Auth, RLS) via `@supabase/supabase-js` + `@supabase/ssr`,
-**local stack only** (Supabase CLI as a dev dependency, Docker). Gmail SMTP mail from step 3.
+Supabase (Postgres, Auth, RLS) via `@supabase/supabase-js` + `@supabase/ssr`,
+**local stack only** (Supabase CLI as a dev dependency, Docker). No SMTP, no email.
 Hosting: Vercel.
 
 ## Commands
@@ -43,7 +45,12 @@ pnpm db:reset         # migrations + fictitious seed, LOCAL database
 pnpm test:db          # pgTAP tests (supabase/tests/database)
 pnpm db:types         # regenerate src/server/supabase/database.types.ts (commit it)
 pnpm db:env           # local Supabase variables for .env.local
+pnpm local:link -- --email membre1@example.test   # personal link for a seed member (local only)
+pnpm bootstrap:facilitator -- --name "…"          # first animateur of an empty database
 ```
+
+E2E tests need the local stack: `pnpm db:start && pnpm db:reset && pnpm build && pnpm test:e2e`
+(serial, shared database; sign-in helpers in `tests/e2e/support/`).
 
 Requires `.env.local` (copy `.env.example`). A missing variable stops the app with a clear message.
 A new required variable goes in `src/lib/env.ts`, `.env.example` **and** the CI workflow.
@@ -55,7 +62,10 @@ database, push, and validate the database through the CI `database` job. Details
 ## Structure
 
 See `docs/architecture.md`. In short: `src/app` routes → `src/components/{layout,ui}` →
-`src/lib` (pure); **only** `src/app` calls `src/server` (database, mail, business rules).
+`src/lib` (pure); **only** `src/app` calls `src/server` (database, sessions, business rules).
+Pages and actions start with `requireMember()` / `requireFacilitator()` / `requireLead()`
+(`src/server/auth/session.ts`). Server Actions return `ActionResult` via `runAction()`, and
+check the number of rows touched (RLS refusals are silent).
 
 ## Conventions
 
@@ -98,6 +108,6 @@ colour **and** icon **and** label.
 
 ## Roadmap
 
-1 init & design system ✅ · 2 database & RLS ✅ · 3 sign-in & members · 4 week & entry window ·
-5 topic entry · 6 visit entry · 7 preparation view · 8 the wheel · 9 speaking turns & timer ·
-10 visits & end of meeting · 11 Friday reminder · 12 design & a11y polish · 13 checks & go-live.
+Phases (one PR each, see `docs/progress.md`): A step 2 merged ✅ · B personal links & Team ✅ ·
+C meeting calendar · D topic entry · E visit entry · F preparation · G attendance & wheel ·
+H speaking turns, timer & visits · I design & a11y polish · J checks & go-live prep.

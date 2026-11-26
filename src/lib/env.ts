@@ -14,7 +14,6 @@ const publicEnvSchema = z.object({
 
 /**
  * Server-only variables. Add each new variable here AND in `.env.example` AND in the CI.
- * SMTP variables join this schema in step 3.
  */
 const envSchema = publicEnvSchema.extend({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

@@ -21,7 +21,9 @@
     "db:reset": "supabase db reset --local",
     "db:types": "supabase gen types typescript --local --schema public > src/server/supabase/database.types.ts",
     "test:db": "supabase test db --local",
-    "db:env": "supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY"
+    "db:env": "supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY",
+    "bootstrap:facilitator": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/bootstrap-facilitator.ts",
+    "local:link": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/local-link.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

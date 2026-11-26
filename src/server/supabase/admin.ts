@@ -7,8 +7,8 @@ import type { Database } from "./database.types";
  * Admin client (service_role key): **bypasses RLS**. Server only — importing it from a
  * Client Component fails the build (`server-only`).
  *
- * Reserved for server tasks that no user may do: creating meetings (step 4), linking an auth
- * account to its member at first sign-in (step 3), the Friday reminder (step 11).
+ * Reserved for server tasks that no user may do: personal links and auth accounts
+ * (src/server/auth), creating meetings, the bootstrap script.
  * Always check permissions in code before calling it.
  */
 export function createSupabaseAdminClient(): SupabaseClient<Database> {

@@ -3,14 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
-import { isActivePath, MAIN_NAV } from "@/lib/routes";
+import { isActivePath, MAIN_NAV, TEAM_NAV_ITEM } from "@/lib/routes";
+
+export interface MainNavProps {
+  /** Adds the « Équipe » tab (animateurs only). */
+  showTeam?: boolean;
+}
 
 /**
  * Main navigation as a pill on 70 % white; the active tab is `ink` with white text.
  * Under 640 px it becomes a bar fixed at the bottom of the screen, above the hills.
  */
-export function MainNav() {
+export function MainNav({ showTeam = false }: MainNavProps) {
   const pathname = usePathname();
+  const items = showTeam ? [...MAIN_NAV, TEAM_NAV_ITEM] : MAIN_NAV;
 
   return (
     <nav
@@ -21,10 +27,10 @@ export function MainNav() {
       )}
     >
       <ul className="flex items-center gap-1">
-        {MAIN_NAV.map(({ href, label, icon: Icon }) => {
+        {items.map(({ href, label, icon: Icon }) => {
           const active = isActivePath(pathname, href);
           return (
-            <li key={href} className="flex-1 sm:flex-none">
+            <li key={href} className="min-w-0 flex-1 sm:flex-none">
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
