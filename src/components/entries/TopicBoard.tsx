@@ -167,7 +167,7 @@ export function TopicBoard({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" data-testid="topic-board" data-hydrated={hydrated}>
       {!entryOpen && (
         <Card variant="veiled" className="flex items-center gap-3">
           <Lock aria-hidden className="size-5 shrink-0" />

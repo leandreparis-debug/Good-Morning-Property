@@ -7,6 +7,11 @@ import { DEMO, insertTopics, resetEntries, signInAs, storedTopicTitles } from ".
 const WHO = DEMO.member4;
 
 const list = (page: Page) => page.getByRole("list", { name: "Mes sujets, par priorité" });
+
+/** Waits until React has hydrated the board (before that, clicks and drags do nothing). */
+async function ready(page: Page) {
+  await expect(page.getByTestId("topic-board")).toHaveAttribute("data-hydrated", "true");
+}
 const titles = (page: Page) => list(page).getByRole("heading", { level: 3 }).allTextContents();
 
 async function addTopic(page: Page, title: string, tag = "Pour info") {
@@ -25,6 +30,7 @@ test.beforeEach(async () => {
 
 test("greeting, empty state and accessible page", async ({ page }) => {
   await signInAs(page, WHO);
+  await ready(page);
   await expect(page.getByText("Point du lundi 12 janvier")).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: "Bonjour, Membre" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Sujets 0/5" })).toHaveAttribute(
@@ -37,6 +43,7 @@ test("greeting, empty state and accessible page", async ({ page }) => {
 
 test("adding up to 5 topics, then the button is disabled", async ({ page }) => {
   await signInAs(page, WHO);
+  await ready(page);
   for (let i = 1; i <= 5; i++) {
     await expect(
       page.getByRole("button", { name: `Ajouter un sujet (encore ${6 - i})` }),
@@ -57,6 +64,7 @@ test("a 6th topic is refused by the server", async ({ page, context }) => {
     [1, 2, 3, 4].map((i) => ({ title: `Déjà là ${i}` })),
   );
   await signInAs(page, WHO);
+  await ready(page);
   await page.getByRole("button", { name: "Ajouter un sujet (encore 1)" }).click();
   const sheet = page.getByRole("dialog", { name: "Nouveau sujet" });
   await sheet.getByLabel("Titre").fill("Sixième sujet");
@@ -64,6 +72,7 @@ test("a 6th topic is refused by the server", async ({ page, context }) => {
   // Meanwhile, the 5th topic is added from another tab.
   const other = await context.newPage();
   await other.goto("/mes-sujets");
+  await ready(other);
   await addTopic(other, "Cinquième sujet");
   await other.close();
 
@@ -78,6 +87,7 @@ test("a 6th topic is refused by the server", async ({ page, context }) => {
 test("validation, counters and editing", async ({ page }) => {
   await insertTopics(WHO, OPEN_MEETING, [{ title: "À modifier" }]);
   await signInAs(page, WHO);
+  await ready(page);
 
   await page.getByRole("button", { name: /^Ajouter un sujet/ }).click();
   const sheet = page.getByRole("dialog", { name: "Nouveau sujet" });
@@ -106,11 +116,13 @@ test("validation, counters and editing", async ({ page }) => {
 test("reordering with the keyboard and with the mouse", async ({ page }) => {
   await insertTopics(WHO, OPEN_MEETING, [{ title: "A" }, { title: "B" }, { title: "C" }]);
   await signInAs(page, WHO);
+  await ready(page);
 
   await page.getByRole("button", { name: "Descendre « A »" }).focus();
   await page.keyboard.press("Enter");
   await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["B", "A", "C"]);
   await page.reload();
+  await ready(page);
   await expect.poll(() => titles(page)).toEqual(["B", "A", "C"]);
 
   // Drag C's handle above B.
@@ -139,6 +151,7 @@ test("reordering with the keyboard and with the mouse", async ({ page }) => {
 test("deleting asks for confirmation and compacts the priorities", async ({ page }) => {
   await insertTopics(WHO, OPEN_MEETING, [{ title: "Un" }, { title: "Deux" }, { title: "Trois" }]);
   await signInAs(page, WHO);
+  await ready(page);
 
   await page.getByRole("button", { name: "Supprimer « Deux »" }).click();
   const confirm = page.getByRole("dialog", { name: "Supprimer ce sujet ?" });
@@ -170,6 +183,7 @@ test.describe("mobile (390 px)", () => {
       })),
     );
     await signInAs(page, WHO);
+    await ready(page);
     await expect(list(page).getByRole("listitem")).toHaveCount(5);
     const { scrollWidth, clientWidth } = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,
