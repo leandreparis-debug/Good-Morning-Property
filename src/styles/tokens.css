@@ -1,0 +1,63 @@
+/*
+ * Design tokens — DA « Prairie du matin ».
+ * Source of truth: docs/design.md. Values are frozen: change them there first.
+ * Exposed to Tailwind v4 via @theme (e.g. bg-sky, text-muted, shadow-card).
+ */
+
+@theme {
+  /* Palette */
+  --color-sky: #b9d6f2;
+  --color-sky-mid: #d6e7f8;
+  --color-mist: #eaf3fc;
+  --color-ink: #0e1a24;
+  --color-ink-soft: #2f4a5e;
+  --color-muted: #5b6b78;
+  --color-card: #ffffff;
+  --color-line: #c9d8e6;
+  --color-grass: #9cc46b;
+  --color-meadow: #6e9e45;
+  --color-hill: #4f7f32;
+  --color-sun: #f7c948;
+  --color-ember: #e8553d;
+
+  /* Topic tags: background (bg) + text (fg) */
+  --color-tag-info-bg: #dce8fb;
+  --color-tag-info-fg: #1d4f9e;
+  --color-tag-exchange-bg: #d9f0e1;
+  --color-tag-exchange-fg: #1f6b3e;
+  --color-tag-decision-bg: #fbe9b7;
+  --color-tag-decision-fg: #7a4f00;
+  --color-tag-alert-bg: #fbdad3;
+  --color-tag-alert-fg: #a3261a;
+
+  /* Type scale */
+  --text-eyebrow: 12px;
+  --text-eyebrow--letter-spacing: 0.14em;
+  --text-eyebrow-projection: 16px;
+  --text-eyebrow-projection--letter-spacing: 0.14em;
+  --text-card-title: 22px;
+  --text-card-title--line-height: 1.2;
+  --text-card-title-projection: 26px;
+  --text-card-title-projection--line-height: 1.2;
+  --text-screen: 44px;
+  --text-screen--line-height: 1.02;
+  --text-screen-projection: clamp(84px, 7vw, 104px);
+  --text-screen-projection--line-height: 1;
+  --text-timer: 168px;
+  --text-timer--line-height: 1;
+
+  --tracking-eyebrow: 0.14em;
+  --tracking-wordmark: 0.32em;
+
+  /* Shapes */
+  --radius-card-sm: 22px;
+  --radius-card: 28px;
+  --radius-soft: 16px;
+  --shadow-card: 0 12px 32px rgba(30, 60, 90, 0.1);
+}
+
+/* Fonts come from next/font (CSS variables set on <html> in src/app/layout.tsx). */
+@theme inline {
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+}
