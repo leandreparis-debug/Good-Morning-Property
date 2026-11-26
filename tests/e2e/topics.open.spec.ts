@@ -113,39 +113,45 @@ test("validation, counters and editing", async ({ page }) => {
   await expect(card.getByText("Pour alerte")).toBeVisible();
 });
 
-test("reordering with the keyboard and with the mouse", async ({ page }) => {
-  await insertTopics(WHO, OPEN_MEETING, [{ title: "A" }, { title: "B" }, { title: "C" }]);
-  await signInAs(page, WHO);
-  await ready(page);
+test.describe("reordering", () => {
+  // Tall viewport: the whole list must be on screen while dragging with the mouse.
+  test.use({ viewport: { width: 1280, height: 1600 } });
 
-  await page.getByRole("button", { name: "Descendre « A »" }).focus();
-  await page.keyboard.press("Enter");
-  await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["B", "A", "C"]);
-  await page.reload();
-  await ready(page);
-  await expect.poll(() => titles(page)).toEqual(["B", "A", "C"]);
+  test("reordering with the keyboard and with the mouse", async ({ page }) => {
+    await insertTopics(WHO, OPEN_MEETING, [{ title: "A" }, { title: "B" }, { title: "C" }]);
+    await signInAs(page, WHO);
+    await ready(page);
 
-  // Drag C's handle above B.
-  const handle = page.getByRole("button", { name: "Déplacer « C »" });
-  const target = list(page).getByRole("listitem").first();
-  const from = await handle.boundingBox();
-  const to = await target.boundingBox();
-  if (!from || !to) throw new Error("no boxes");
-  const x = from.x + from.width / 2;
-  await page.mouse.move(x, from.y + from.height / 2);
-  await page.mouse.down();
-  // Small steps first: the pointer sensor starts dragging after 6 px.
-  for (let dy = 2; dy <= 12; dy += 2) await page.mouse.move(x, from.y + from.height / 2 - dy);
-  await page.mouse.move(x, to.y + to.height * 0.25, { steps: 25 });
-  await page.waitForTimeout(200);
-  await page.mouse.up();
-  await page.waitForTimeout(500);
-  const alert = page.getByRole("main").getByRole("alert");
-  if ((await alert.count()) > 0) throw new Error(`Server refused: ${await alert.innerText()}`);
-  await expect.poll(() => titles(page)).toEqual(["C", "B", "A"]);
-  await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["C", "B", "A"]);
-  await page.reload();
-  await expect.poll(() => titles(page)).toEqual(["C", "B", "A"]);
+    await page.getByRole("button", { name: "Descendre « A »" }).focus();
+    await page.keyboard.press("Enter");
+    await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["B", "A", "C"]);
+    await page.reload();
+    await ready(page);
+    await expect.poll(() => titles(page)).toEqual(["B", "A", "C"]);
+
+    // Drag C's handle above B.
+    const handle = page.getByRole("button", { name: "Déplacer « C »" });
+    await handle.scrollIntoViewIfNeeded();
+    const target = list(page).getByRole("listitem").first();
+    const from = await handle.boundingBox();
+    const to = await target.boundingBox();
+    if (!from || !to) throw new Error("no boxes");
+    const x = from.x + from.width / 2;
+    await page.mouse.move(x, from.y + from.height / 2);
+    await page.mouse.down();
+    // Small steps first: the pointer sensor starts dragging after 6 px.
+    for (let dy = 2; dy <= 12; dy += 2) await page.mouse.move(x, from.y + from.height / 2 - dy);
+    await page.mouse.move(x, to.y + to.height * 0.25, { steps: 25 });
+    await page.waitForTimeout(200);
+    await page.mouse.up();
+    await page.waitForTimeout(500);
+    const alert = page.getByRole("main").getByRole("alert");
+    if ((await alert.count()) > 0) throw new Error(`Server refused: ${await alert.innerText()}`);
+    await expect.poll(() => titles(page)).toEqual(["C", "B", "A"]);
+    await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["C", "B", "A"]);
+    await page.reload();
+    await expect.poll(() => titles(page)).toEqual(["C", "B", "A"]);
+  });
 });
 
 test("deleting asks for confirmation and compacts the priorities", async ({ page }) => {
