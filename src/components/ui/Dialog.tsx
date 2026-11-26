@@ -21,6 +21,10 @@ export interface DialogProps {
  */
 export function Dialog({ open, onClose, title, description, children, className }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  // Latest `open` prop: the native `close` event also fires when WE close the dialog
+  // (open → false); only a close the parent did not ask for must call `onClose`.
+  const openRef = useRef(open);
+  openRef.current = open;
   const titleId = useId();
   const descriptionId = useId();
 
@@ -36,7 +40,9 @@ export function Dialog({ open, onClose, title, description, children, className 
       ref={ref}
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
-      onClose={onClose}
+      onClose={() => {
+        if (openRef.current) onClose();
+      }}
       onCancel={(event) => {
         event.preventDefault();
         onClose();
