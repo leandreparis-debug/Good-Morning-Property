@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import { DOMAIN_ERROR_MESSAGES, DomainError, toDomainError } from "./errors";
 
 describe("toDomainError", () => {
@@ -80,6 +81,11 @@ describe("toDomainError", () => {
     expect(toDomainError(new Error("network down")).code).toBe("UNKNOWN");
     expect(toDomainError(null).code).toBe("UNKNOWN");
     expect(toDomainError("boom").code).toBe("UNKNOWN");
+  });
+
+  it("maps a Zod validation error to INVALID_INPUT", () => {
+    const result = z.uuid().safeParse("nope");
+    expect(toDomainError(result.error).code).toBe("INVALID_INPUT");
   });
 
   it("returns a DomainError unchanged", () => {
