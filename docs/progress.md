@@ -19,3 +19,10 @@ Merged: [PR #4](https://github.com/leandreparis-debug/Good-Morning-Property/pull
 Pure `meetingCalendar.ts` (Paris time, DST, new year), `clock.ts` (`APP_FAKE_NOW`, ignored in
 production), idempotent `getOrCreateCurrentMeeting()`, header pill with three states.
 Attention: e2e uses one server per fake clock (2099 = open, 2020 = closed) so DB and app agree.
+Merged: [PR #5](https://github.com/leandreparis-debug/Good-Morning-Property/pull/5). Fonts are now self-hosted (Google Fonts fetch was flaky at build).
+
+## D · Topic entry
+
+`/mes-sujets`: greeting, tabs, topic cards, sheet with tag radio pills and counters, reorder by
+buttons and drag and drop (`reorder_topics`, one transaction), delete + compaction, read-only after
+the deadline, optimistic updates. Attention: drag and drop is an extra; the buttons are the reference.

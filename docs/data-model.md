@@ -67,22 +67,23 @@ erDiagram
 
 ## Business rules and where they are enforced
 
-| Rule                                                                          | Database                                                                                                        | App                              |
-| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| A member is active or inactive; inactive members read and write nothing       | `private.current_member_id()` only returns **active** members; every policy depends on it                       | B, middleware                    |
-| One **responsable** at most                                                   | partial unique index `members_single_lead_idx` (23505)                                                          | B, Team screen                   |
-| At least one active **animateur**                                             | trigger `members_keep_one_facilitator` (P0001, hint `last_facilitator`)                                         | B, middleware                    |
-| A meeting is on a Monday, one per date                                        | `check (extract(isodow …) = 1)`, `unique (meeting_date)`                                                        | C                                |
-| Entry closes at the stored deadline (Monday 10:00 Paris)                      | RLS (`private.is_entry_open`) + trigger `*_entry_open` for a readable error (P0001, hint `entry_closed`)        | C computes the deadline          |
-| 5 topics max per member and meeting                                           | trigger `topics_max_five` (P0001, hint `topics_max_five`), with an advisory lock                                | D                                |
-| Priority 1–5, unique per member and meeting                                   | `check`, constraint `topics_member_priority_unique` **deferrable initially deferred** (swap in one transaction) | D                                |
-| One tag among 4                                                               | enum `topic_tag`                                                                                                | D (`src/lib/topicTags.ts`)       |
-| Visit date within the meeting week (Mon–Sun)                                  | trigger `visits_in_meeting_week` (P0001, hint `visit_outside_meeting_week`)                                     | E                                |
-| Members only write their own entries; `meeting_id` / `member_id` never change | RLS `with check` + column-level `UPDATE` privileges                                                             | D, E                             |
-| `user_id` is linked server-side only                                          | no `INSERT`/`UPDATE` privilege on `members.user_id` for API users                                               | admin client (`src/server/auth`) |
-| Personal link: only the SHA-256 is stored, invisible to API users             | `access_token_hash` format check, column-level `SELECT` without the token columns                               | `docs/auth.md`                   |
-| Moving the responsable role is atomic                                         | `public.set_lead(uuid)` (security invoker, facilitators only)                                                   | Team screen                      |
-| Nothing kept after the meeting                                                | —                                                                                                               | H (client only)                  |
+| Rule                                                                          | Database                                                                                                               | App                              |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| A member is active or inactive; inactive members read and write nothing       | `private.current_member_id()` only returns **active** members; every policy depends on it                              | B, middleware                    |
+| One **responsable** at most                                                   | partial unique index `members_single_lead_idx` (23505)                                                                 | B, Team screen                   |
+| At least one active **animateur**                                             | trigger `members_keep_one_facilitator` (P0001, hint `last_facilitator`)                                                | B, middleware                    |
+| A meeting is on a Monday, one per date                                        | `check (extract(isodow …) = 1)`, `unique (meeting_date)`                                                               | C                                |
+| Entry closes at the stored deadline (Monday 10:00 Paris)                      | RLS (`private.is_entry_open`) + trigger `*_entry_open` for a readable error (P0001, hint `entry_closed`)               | C computes the deadline          |
+| 5 topics max per member and meeting                                           | trigger `topics_max_five` (P0001, hint `topics_max_five`), with an advisory lock                                       | D                                |
+| Priority 1–5, unique per member and meeting                                   | `check`, constraint `topics_member_priority_unique` **deferrable initially deferred** (swap in one transaction)        | D                                |
+| Reordering rewrites all priorities in one transaction                         | `public.reorder_topics(meeting_id, ordered_ids)` (security invoker: own topics only, all of them, before the deadline) | D (`reorderTopics`)              |
+| One tag among 4                                                               | enum `topic_tag`                                                                                                       | D (`src/lib/topicTags.ts`)       |
+| Visit date within the meeting week (Mon–Sun)                                  | trigger `visits_in_meeting_week` (P0001, hint `visit_outside_meeting_week`)                                            | E                                |
+| Members only write their own entries; `meeting_id` / `member_id` never change | RLS `with check` + column-level `UPDATE` privileges                                                                    | D, E                             |
+| `user_id` is linked server-side only                                          | no `INSERT`/`UPDATE` privilege on `members.user_id` for API users                                                      | admin client (`src/server/auth`) |
+| Personal link: only the SHA-256 is stored, invisible to API users             | `access_token_hash` format check, column-level `SELECT` without the token columns                                      | `docs/auth.md`                   |
+| Moving the responsable role is atomic                                         | `public.set_lead(uuid)` (security invoker, facilitators only)                                                          | Team screen                      |
+| Nothing kept after the meeting                                                | —                                                                                                                      | H (client only)                  |
 
 Database errors are translated into business errors by `src/server/errors.ts`
 (`toDomainError`): codes `TOPICS_LIMIT_REACHED`, `DUPLICATE_PRIORITY`, `ENTRY_CLOSED`,
@@ -114,6 +115,13 @@ Helper functions (`private` schema, `security definer`, `search_path = ''`, `sta
 
 Note: a refused UPDATE or DELETE under RLS is **silent** (0 rows affected). The app checks the
 number of affected rows (`.select()` after `update`/`delete`).
+
+## Functions callable through the API
+
+| Function                                  | Rights                                             | Purpose                                                                                                                 |
+| ----------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `set_lead(target_member_id)`              | animateurs (security invoker)                      | move the responsable role atomically                                                                                    |
+| `reorder_topics(meeting_id, ordered_ids)` | the member, before the deadline (security invoker) | rewrite priorities 1..n in the given order (P0001 `invalid_topic_order` if the list is not exactly the member's topics) |
 
 ## Tests
 
