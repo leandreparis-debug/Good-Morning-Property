@@ -21,7 +21,18 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
   headers() {
-    return Promise.resolve([{ source: "/:path*", headers: securityHeaders }]);
+    return Promise.resolve([
+      { source: "/:path*", headers: securityHeaders },
+      {
+        // Personal links: never leak the token (referrer, caches, search engines).
+        source: "/l/:token*",
+        headers: [
+          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "Cache-Control", value: "no-store" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+    ]);
   },
 };
 
