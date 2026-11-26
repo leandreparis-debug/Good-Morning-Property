@@ -50,7 +50,9 @@ pnpm bootstrap:facilitator -- --name "…"          # first animateur of an empt
 ```
 
 E2E tests need the local stack: `pnpm db:start && pnpm db:reset && pnpm build && pnpm test:e2e`
-(serial, shared database; sign-in helpers in `tests/e2e/support/`).
+(serial, shared database; sign-in helpers in `tests/e2e/support/`). One server per fake clock
+(`tests/e2e/support/clocks.ts`): `*.open.spec.ts`, `*.soon.spec.ts`, `*.closed.spec.ts`.
+`pnpm test:integration` runs Vitest integration tests against the local stack.
 
 Requires `.env.local` (copy `.env.example`). A missing variable stops the app with a clear message.
 A new required variable goes in `src/lib/env.ts`, `.env.example` **and** the CI workflow.
@@ -70,7 +72,10 @@ check the number of rows touched (RLS refusals are silent).
 ## Conventions
 
 - UI text in **French**; code, file names and commits in **English**.
-- Dates formatted in French, time zone `Europe/Paris` (`src/lib/dates.ts`).
+- Dates formatted in French, time zone `Europe/Paris` (`src/lib/dates.ts`). Meeting dates,
+  deadlines and phases only via `src/lib/meetingCalendar.ts` (pure, `now` passed in); the
+  server's `now` comes from `src/server/clock.ts` (never `new Date()` for business rules).
+  See `docs/calendar.md`.
 - Components `PascalCase.tsx`, utilities `camelCase.ts`, routes in French kebab-case
   (`/mes-sujets`, `/reunion`).
 - Hand-written UI components in `src/components/ui/` (no component library). JSDoc on each.
@@ -109,5 +114,5 @@ colour **and** icon **and** label.
 ## Roadmap
 
 Phases (one PR each, see `docs/progress.md`): A step 2 merged ✅ · B personal links & Team ✅ ·
-C meeting calendar · D topic entry · E visit entry · F preparation · G attendance & wheel ·
+C meeting calendar ✅ · D topic entry · E visit entry · F preparation · G attendance & wheel ·
 H speaking turns, timer & visits · I design & a11y polish · J checks & go-live prep.
