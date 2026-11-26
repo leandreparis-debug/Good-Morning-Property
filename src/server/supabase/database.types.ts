@@ -91,7 +91,12 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "reorder_topics":
+            "meeting_fill_status":
+{ Args: { "meeting_id": string }; Returns: {
+              "alerts_count": number,"member_id": string,"topics_count": number,"visits_count": number
+            }[]
+                           },
+"reorder_topics":
 { Args: { "meeting_id": string,"ordered_ids": (string)[] }; Returns: undefined
                            },
 "set_lead":
