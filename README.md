@@ -55,4 +55,4 @@ Première exécution des tests e2e en local : `pnpm exec playwright install chro
 
 Photo de fond : « Rolling green hills under a bright, blue sky », **Spencer DeMera** sur
 [Unsplash](https://unsplash.com/photos/q0lB6w0z6Ns), licence Unsplash.
-Polices : Instrument Serif et Inter Tight (SIL Open Font License), via Google Fonts.
+Polices : Instrument Serif et Inter Tight (SIL Open Font License), hébergées dans `src/app/fonts/` (licence dans `OFL.txt`).

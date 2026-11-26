@@ -55,7 +55,7 @@ A tag is **colour + icon + label**, never colour alone (readable in black and wh
 
 ## Typography
 
-Loaded with `next/font/google` in `src/app/layout.tsx`.
+Self-hosted with `next/font/local` (`src/app/fonts/`, latin subset downloaded from Google Fonts, SIL OFL 1.1 in `src/app/fonts/OFL.txt`): the build needs no network.
 
 - **Instrument Serif** 400, normal + italic → `font-display`: screen titles, first names,
   priority numbers, key figures, timer. In large titles, one word in italics
