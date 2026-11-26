@@ -84,8 +84,7 @@ export async function deleteTopic(topicId: string): Promise<Topic[]> {
   expectOneRow(data, entryOpen);
 
   const remaining = await listMemberTopics(meeting.id, member.id);
-  const compact = remaining.every((topic, index) => topic.priority === index + 1);
-  if (!compact)
+  if (!isCompact(remaining))
     await callReorder(
       meeting.id,
       remaining.map((topic) => topic.id),
@@ -99,6 +98,11 @@ export async function reorderTopics(orderedIds: string[]): Promise<Topic[]> {
   const { member, meeting } = await requireOpenEntry();
   await callReorder(meeting.id, ids);
   return listMemberTopics(meeting.id, member.id);
+}
+
+/** True when priorities are exactly 1..n (topics sorted by priority). */
+function isCompact(topics: readonly Topic[]): boolean {
+  return topics.every((topic, index) => topic.priority === index + 1);
 }
 
 async function callReorder(meetingId: string, orderedIds: string[]): Promise<void> {
