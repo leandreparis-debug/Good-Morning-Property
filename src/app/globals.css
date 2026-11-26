@@ -35,3 +35,18 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Timer overrun: pulsing ember halo (disabled by prefers-reduced-motion, see above). */
+@keyframes ember-halo {
+  0%,
+  100% {
+    box-shadow:
+      0 12px 32px rgba(30, 60, 90, 0.1),
+      0 0 0 0 rgba(232, 85, 61, 0.55);
+  }
+  50% {
+    box-shadow:
+      0 12px 32px rgba(30, 60, 90, 0.1),
+      0 0 0 18px rgba(232, 85, 61, 0);
+  }
+}
