@@ -121,6 +121,28 @@ export async function insertTopics(
   if (error) throw error;
 }
 
+/** Inserts visits for a member, bypassing the entry window. */
+export async function insertVisits(
+  email: string,
+  meetingDate: string,
+  visits: { visitDate: string; place: string; purpose: string }[],
+): Promise<void> {
+  const meeting = await ensureMeeting(meetingDate);
+  const member = await memberId(email);
+  const { error } = await adminClient()
+    .from("visits")
+    .insert(
+      visits.map((visit) => ({
+        meeting_id: meeting,
+        member_id: member,
+        visit_date: visit.visitDate,
+        place: visit.place,
+        purpose: visit.purpose,
+      })),
+    );
+  if (error) throw error;
+}
+
 /** Titles of a member's topics for a meeting, by priority, as stored in the database. */
 export async function storedTopicTitles(email: string, meetingDate: string): Promise<string[]> {
   const meeting = await ensureMeeting(meetingDate);
