@@ -119,10 +119,13 @@ test("reordering with the keyboard and with the mouse", async ({ page }) => {
   const from = await handle.boundingBox();
   const to = await target.boundingBox();
   if (!from || !to) throw new Error("no boxes");
-  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  const x = from.x + from.width / 2;
+  await page.mouse.move(x, from.y + from.height / 2);
   await page.mouse.down();
-  await page.mouse.move(from.x + from.width / 2, from.y - 10, { steps: 5 });
-  await page.mouse.move(to.x + to.width / 2, to.y + 5, { steps: 15 });
+  // Small steps first: the pointer sensor starts dragging after 6 px.
+  for (let dy = 2; dy <= 12; dy += 2) await page.mouse.move(x, from.y + from.height / 2 - dy);
+  await page.mouse.move(x, to.y + to.height * 0.25, { steps: 25 });
+  await page.waitForTimeout(200);
   await page.mouse.up();
   await expect.poll(() => titles(page)).toEqual(["C", "B", "A"]);
   await page.reload();
@@ -142,7 +145,7 @@ test("deleting asks for confirmation and compacts the priorities", async ({ page
   await confirm.getByRole("button", { name: "Supprimer", exact: true }).click();
   await expect.poll(() => titles(page)).toEqual(["Un", "Trois"]);
   await page.reload();
-  await expect(list(page).getByText("Priorité 2")).toHaveCount(1);
+  await expect(list(page).getByRole("listitem")).toHaveCount(2);
   await expect(list(page).getByRole("listitem").nth(1)).toContainText("Trois");
   await expect(list(page).getByRole("listitem").nth(1)).toContainText("Priorité 2");
 });

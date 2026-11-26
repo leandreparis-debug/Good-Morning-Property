@@ -50,3 +50,9 @@ describe("topicOrderSchema", () => {
     expect(topicOrderSchema.safeParse([1, 2, 3, 4, 5, 6].map(id)).success).toBe(false);
   });
 });
+
+describe("ids", () => {
+  it("accept any UUID-shaped id (seed ids are not RFC 4122)", () => {
+    expect(topicOrderSchema.safeParse(["00000000-0000-4000-c000-000000000001"]).success).toBe(true);
+  });
+});

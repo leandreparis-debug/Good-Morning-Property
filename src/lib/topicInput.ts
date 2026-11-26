@@ -23,10 +23,14 @@ export const topicInputSchema = z.object({
 });
 export type TopicInput = z.input<typeof topicInputSchema>;
 
-export const topicIdSchema = z.uuid();
+/**
+ * Ids are validated with `z.guid()` (UUID shape) rather than `z.uuid()` (RFC version/variant):
+ * Postgres accepts any UUID, and fixed fictitious ids in the seed are not RFC 4122.
+ */
+export const topicIdSchema = z.guid();
 
 /** New order of the member's topics: distinct ids, at most 5. */
 export const topicOrderSchema = z
-  .array(z.uuid())
+  .array(z.guid())
   .max(MAX_TOPICS)
   .refine((ids) => new Set(ids).size === ids.length, "Ordre invalide.");
