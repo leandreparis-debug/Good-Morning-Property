@@ -75,7 +75,9 @@ check the number of rows touched (RLS refusals are silent).
 - Dates formatted in French, time zone `Europe/Paris` (`src/lib/dates.ts`). Meeting dates,
   deadlines and phases only via `src/lib/meetingCalendar.ts` (pure, `now` passed in); the
   server's `now` comes from `src/server/clock.ts` (never `new Date()` for business rules).
-  See `docs/calendar.md`.
+  See `docs/calendar.md`. Entry screens: `docs/entries.md`.
+- Every write to topics/visits goes through `requireOpenEntry()` (`src/server/entries/`) and
+  checks the rows touched with `expectOneRow()`.
 - Components `PascalCase.tsx`, utilities `camelCase.ts`, routes in French kebab-case
   (`/mes-sujets`, `/reunion`).
 - Hand-written UI components in `src/components/ui/` (no component library). JSDoc on each.
@@ -114,5 +116,5 @@ colour **and** icon **and** label.
 ## Roadmap
 
 Phases (one PR each, see `docs/progress.md`): A step 2 merged ✅ · B personal links & Team ✅ ·
-C meeting calendar ✅ · D topic entry · E visit entry · F preparation · G attendance & wheel ·
+C meeting calendar ✅ · D topic entry ✅ · E visit entry · F preparation · G attendance & wheel ·
 H speaking turns, timer & visits · I design & a11y polish · J checks & go-live prep.

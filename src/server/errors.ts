@@ -12,6 +12,7 @@ export const DOMAIN_ERROR_CODES = [
   "DUPLICATE_EMAIL",
   "CANNOT_DEACTIVATE_SELF",
   "NOT_FOUND",
+  "INVALID_ORDER",
   "INVALID_INPUT",
   "FORBIDDEN",
   "UNKNOWN",
@@ -34,6 +35,7 @@ export const DOMAIN_ERROR_MESSAGES: Record<DomainErrorCode, string> = {
   DUPLICATE_EMAIL: "Un membre utilise déjà cette adresse mail.",
   CANNOT_DEACTIVATE_SELF: "Tu ne peux pas désactiver ton propre accès.",
   NOT_FOUND: "Élément introuvable : il a peut-être été supprimé entre-temps.",
+  INVALID_ORDER: "Le nouvel ordre ne correspond pas à tes sujets : recharge la page.",
   INVALID_INPUT: "Certaines informations sont invalides.",
   FORBIDDEN: "Tu n'as pas les droits pour cette action, ou la saisie est fermée.",
   UNKNOWN: "Une erreur inattendue est survenue. Réessaie dans un instant.",
@@ -66,6 +68,7 @@ const HINT_TO_CODE: Record<string, DomainErrorCode> = {
   visit_outside_meeting_week: "VISIT_OUTSIDE_WEEK",
   last_facilitator: "LAST_FACILITATOR",
   member_not_found: "NOT_FOUND",
+  invalid_topic_order: "INVALID_ORDER",
 };
 
 /** Unique constraints and indexes, by name (as it appears in the Postgres message). */
@@ -105,6 +108,7 @@ function codeFor(error: z.infer<typeof postgresErrorSchema>): DomainErrorCode {
  */
 export function toDomainError(error: unknown): DomainError {
   if (error instanceof DomainError) return error;
+  if (error instanceof z.ZodError) return new DomainError("INVALID_INPUT", { cause: error });
   const parsed = postgresErrorSchema.safeParse(error);
   const code = parsed.success ? codeFor(parsed.data) : "UNKNOWN";
   return new DomainError(code, { cause: error });

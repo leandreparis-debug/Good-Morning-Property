@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../../../src/server/supabase/database.types";
 
 /** Fictitious seed members (supabase/seed.sql). */
 export const DEMO = {
@@ -19,9 +20,13 @@ function required(name: string): string {
 
 /** Admin client on the LOCAL stack (tests only). */
 export function adminClient() {
-  return createClient(required("NEXT_PUBLIC_SUPABASE_URL"), required("SUPABASE_SERVICE_ROLE_KEY"), {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  return createClient<Database>(
+    required("NEXT_PUBLIC_SUPABASE_URL"),
+    required("SUPABASE_SERVICE_ROLE_KEY"),
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+    },
+  );
 }
 
 /** Gives a member a fresh personal link (like the Team screen does) and returns its path. */
@@ -51,4 +56,83 @@ export async function setMemberActive(email: string, isActive: boolean): Promise
     .update({ is_active: isActive })
     .eq("email", email);
   if (error) throw error;
+}
+
+/** Creates the meeting of `meetingDate` if needed (deadline: Monday 10:00 Paris) and returns its id. */
+export async function ensureMeeting(meetingDate: string): Promise<string> {
+  const { getEntryDeadline } = await import("../../../src/lib/meetingCalendar");
+  const admin = adminClient();
+  await admin
+    .from("meetings")
+    .upsert(
+      { meeting_date: meetingDate, entry_deadline: getEntryDeadline(meetingDate).toISOString() },
+      { onConflict: "meeting_date", ignoreDuplicates: true },
+    );
+  const { data, error } = await admin
+    .from("meetings")
+    .select("id")
+    .eq("meeting_date", meetingDate)
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+async function memberId(email: string): Promise<string> {
+  const { data, error } = await adminClient()
+    .from("members")
+    .select("id")
+    .eq("email", email)
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+/** Removes a member's topics and visits for a meeting (test isolation). */
+export async function resetEntries(email: string, meetingDate: string): Promise<void> {
+  const meeting = await ensureMeeting(meetingDate);
+  const member = await memberId(email);
+  const admin = adminClient();
+  await admin.from("topics").delete().eq("meeting_id", meeting).eq("member_id", member);
+  await admin.from("visits").delete().eq("meeting_id", meeting).eq("member_id", member);
+}
+
+type Tag = "INFO" | "EXCHANGE" | "DECISION" | "ALERT";
+
+/** Inserts topics (priorities 1..n in order) for a member, bypassing the entry window. */
+export async function insertTopics(
+  email: string,
+  meetingDate: string,
+  topics: { title: string; tag?: Tag; details?: string }[],
+): Promise<void> {
+  const meeting = await ensureMeeting(meetingDate);
+  const member = await memberId(email);
+  const { error } = await adminClient()
+    .from("topics")
+    .insert(
+      topics.map((topic, index) => ({
+        meeting_id: meeting,
+        member_id: member,
+        title: topic.title,
+        details: topic.details ?? null,
+        tag: topic.tag ?? "INFO",
+        priority: index + 1,
+      })),
+    );
+  if (error) throw error;
+}
+
+/** Titles of a member's topics for a meeting, by priority, as stored in the database. */
+export async function storedTopicTitles(email: string, meetingDate: string): Promise<string[]> {
+  const meeting = await ensureMeeting(meetingDate);
+  const member = await memberId(email);
+  const { data, error } = await adminClient()
+    .from("topics")
+    .select("title, priority")
+    .eq("meeting_id", meeting)
+    .eq("member_id", member)
+    .order("priority");
+  if (error) throw error;
+  return data.map((row, index) =>
+    row.priority === index + 1 ? row.title : `${row.title}#${row.priority}`,
+  );
 }

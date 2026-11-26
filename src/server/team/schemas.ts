@@ -29,7 +29,7 @@ export const optionalEmailSchema = z
   .transform((value) => (value === "" ? undefined : value.toLowerCase()))
   .pipe(z.email("Adresse mail invalide.").optional());
 
-export const memberIdSchema = z.uuid();
+export const memberIdSchema = z.guid();
 
 /** Add a member (form of the Team screen). */
 export const addMemberSchema = z.object({

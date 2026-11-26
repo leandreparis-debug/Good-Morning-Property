@@ -41,7 +41,7 @@ function toTopic(row: TopicRow): Topic {
  * lead; everyone's for facilitators once the entry deadline has passed.
  */
 export async function listTopicsForMeeting(meetingId: string): Promise<Topic[]> {
-  const id = z.uuid().parse(meetingId);
+  const id = z.guid().parse(meetingId);
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("topics")
@@ -55,7 +55,7 @@ export async function listTopicsForMeeting(meetingId: string): Promise<Topic[]> 
 
 /** Topics of one member for a meeting, by priority (empty if not visible to the current user). */
 export async function listMemberTopics(meetingId: string, memberId: string): Promise<Topic[]> {
-  const ids = z.object({ meetingId: z.uuid(), memberId: z.uuid() }).parse({ meetingId, memberId });
+  const ids = z.object({ meetingId: z.guid(), memberId: z.guid() }).parse({ meetingId, memberId });
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("topics")

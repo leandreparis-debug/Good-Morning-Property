@@ -91,7 +91,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "set_lead":
+            "reorder_topics":
+{ Args: { "meeting_id": string,"ordered_ids": (string)[] }; Returns: undefined
+                           },
+"set_lead":
 { Args: { "target_member_id": string }; Returns: undefined
                            }
           }

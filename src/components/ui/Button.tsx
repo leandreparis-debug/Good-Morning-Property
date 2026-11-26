@@ -1,4 +1,5 @@
 import { ArrowRight, LoaderCircle, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -90,5 +91,51 @@ export function Button({
         </span>
       )}
     </button>
+  );
+}
+
+export interface LinkButtonProps {
+  href: string;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  icon?: LucideIcon;
+  className?: string;
+  children: ReactNode;
+}
+
+/** A link that looks like a {@link Button} (same variants, sun badge for `primary`). */
+export function LinkButton({
+  href,
+  variant = "primary",
+  size = "md",
+  icon: Icon = ArrowRight,
+  className,
+  children,
+}: LinkButtonProps) {
+  const iconClass = size === "projection" ? "size-6" : "size-5";
+  return (
+    <Link
+      href={href}
+      data-variant={variant}
+      className={cn(
+        "inline-flex items-center justify-center gap-3 font-semibold transition-colors",
+        variantClasses[variant],
+        sizeClasses[variant][size],
+        className,
+      )}
+    >
+      <span>{children}</span>
+      {variant === "primary" && (
+        <span
+          aria-hidden
+          className={cn(
+            "grid shrink-0 place-items-center rounded-full bg-sun text-ink",
+            size === "projection" ? "size-[52px]" : "size-9",
+          )}
+        >
+          <Icon className={iconClass} strokeWidth={2.25} />
+        </span>
+      )}
+    </Link>
   );
 }

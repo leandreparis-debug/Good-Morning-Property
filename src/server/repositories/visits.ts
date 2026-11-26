@@ -35,7 +35,7 @@ function toVisit(row: VisitRow): Visit {
 
 /** Visits of a meeting week **visible to the current user** (same rules as topics). */
 export async function listVisitsForMeeting(meetingId: string): Promise<Visit[]> {
-  const id = z.uuid().parse(meetingId);
+  const id = z.guid().parse(meetingId);
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("visits")
@@ -49,7 +49,7 @@ export async function listVisitsForMeeting(meetingId: string): Promise<Visit[]> 
 
 /** Visits of one member for a meeting week, by date. */
 export async function listMemberVisits(meetingId: string, memberId: string): Promise<Visit[]> {
-  const ids = z.object({ meetingId: z.uuid(), memberId: z.uuid() }).parse({ meetingId, memberId });
+  const ids = z.object({ meetingId: z.guid(), memberId: z.guid() }).parse({ meetingId, memberId });
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("visits")
