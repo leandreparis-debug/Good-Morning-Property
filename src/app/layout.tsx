@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Inter_Tight } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { PhotoCredit } from "@/components/layout/PhotoCredit";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -8,19 +8,23 @@ import { SkyBackground } from "@/components/layout/SkyBackground";
 import { getEnv } from "@/lib/env";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+// Self-hosted (src/app/fonts, SIL OFL 1.1): no network access needed at build time.
+const instrumentSerif = localFont({
+  src: [
+    { path: "./fonts/InstrumentSerif-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/InstrumentSerif-Italic.woff2", weight: "400", style: "italic" },
+  ],
   variable: "--font-instrument-serif",
   display: "swap",
+  fallback: ["Georgia", "serif"],
 });
 
-const interTight = Inter_Tight({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const interTight = localFont({
+  src: "./fonts/InterTight-Variable.woff2",
+  weight: "400 700",
   variable: "--font-inter-tight",
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export function generateMetadata(): Metadata {
