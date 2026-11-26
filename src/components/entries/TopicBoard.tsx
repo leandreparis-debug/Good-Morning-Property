@@ -19,7 +19,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ChevronDown, ChevronUp, GripVertical, Lock, Pencil, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   createTopicAction,
   deleteTopicAction,
@@ -77,6 +77,11 @@ export function TopicBoard({
   const [announcement, setAnnouncement] = useState("");
   const [pending, startTransition] = useTransition();
   const router = useRouter();
+  // Lets e2e tests (and only them) wait until event handlers are attached.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
