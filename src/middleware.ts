@@ -14,7 +14,9 @@ function isPublic(pathname: string): boolean {
 /**
  * Refreshes the Supabase session on every request, then:
  * - no session → /connexion (except public pages);
- * - session but no ACTIVE member → signed out, /connexion?raison=inactif;
+ * - session but no ACTIVE member → /connexion?raison=inactif (the session is left as is: the RLS
+ *   gives it access to nothing, and deactivation from the Team screen bans the account; signing
+ *   out here would also fire on Next.js link prefetches);
  * - active member on /connexion → /mes-sujets.
  */
 export async function middleware(request: NextRequest): Promise<NextResponse> {
@@ -62,7 +64,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     .maybeSingle();
 
   if (!member) {
-    await supabase.auth.signOut({ scope: "local" });
     return pathname === ROUTES.signIn ? response : redirect(`${ROUTES.signIn}?raison=inactif`);
   }
 

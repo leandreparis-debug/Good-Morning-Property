@@ -28,7 +28,7 @@ Supabase Auth is kept (the RLS relies on `auth.uid()`), but no email is ever sen
      `/connexion?raison=lien-invalide`: « Ce lien n'est plus valide, demande un nouveau lien à
      ton animateur. » — **the same message in every case**.
 4. **Middleware** (`src/middleware.ts`): refreshes the session on every request; no session →
-   `/connexion`; session without an active member → signed out, `/connexion?raison=inactif`.
+   `/connexion`; session without an active member → `/connexion?raison=inactif` (no sign-out there: the RLS gives an inactive member access to nothing, and Team deactivation bans the account).
 5. **Session helpers** (`src/server/auth/session.ts`): `getCurrentMember()` (cached per
    request), `requireMember()`, `requireFacilitator()`, `requireLead()`. Every page and Server
    Action calls one of them; the UI hiding a button is never the guard.
