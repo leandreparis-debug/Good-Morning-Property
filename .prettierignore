@@ -6,3 +6,4 @@ playwright-report
 test-results
 public
 src/lib/backgroundBlur.ts
+src/server/supabase/database.types.ts

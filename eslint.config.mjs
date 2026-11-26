@@ -18,6 +18,7 @@ const eslintConfig = tseslint.config(
       "playwright-report/**",
       "test-results/**",
       "next-env.d.ts",
+      "src/server/supabase/database.types.ts",
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
@@ -31,6 +32,10 @@ const eslintConfig = tseslint.config(
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", ignoreRestSiblings: true },
+      ],
       "no-console": ["error", { allow: ["warn", "error"] }],
     },
   },

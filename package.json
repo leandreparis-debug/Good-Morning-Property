@@ -14,14 +14,24 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
-    "optimize:background": "tsx scripts/optimize-background.ts"
+    "optimize:background": "tsx scripts/optimize-background.ts",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
+    "db:reset": "supabase db reset --local",
+    "db:types": "supabase gen types typescript --local --schema public > src/server/supabase/database.types.ts",
+    "test:db": "supabase test db --local",
+    "db:env": "supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.2",
     "clsx": "^2.1.1",
     "lucide-react": "^1.81.0",
     "next": "15.5.29",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.7.1",
     "zod": "^4.6.7"
   },
@@ -46,6 +56,7 @@
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "sharp": "^0.35.5",
+    "supabase": "^2.122.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",
