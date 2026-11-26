@@ -120,3 +120,19 @@ export async function insertTopics(
     );
   if (error) throw error;
 }
+
+/** Titles of a member's topics for a meeting, by priority, as stored in the database. */
+export async function storedTopicTitles(email: string, meetingDate: string): Promise<string[]> {
+  const meeting = await ensureMeeting(meetingDate);
+  const member = await memberId(email);
+  const { data, error } = await adminClient()
+    .from("topics")
+    .select("title, priority")
+    .eq("meeting_id", meeting)
+    .eq("member_id", member)
+    .order("priority");
+  if (error) throw error;
+  return data.map((row, index) =>
+    row.priority === index + 1 ? row.title : `${row.title}#${row.priority}`,
+  );
+}

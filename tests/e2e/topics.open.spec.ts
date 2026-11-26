@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { expectNoSeriousA11yViolations } from "./support/a11y";
 import { OPEN_MEETING } from "./support/clocks";
-import { DEMO, insertTopics, resetEntries, signInAs } from "./support/db";
+import { DEMO, insertTopics, resetEntries, signInAs, storedTopicTitles } from "./support/db";
 
 // Server clock: Wednesday 07/01/2099, entry open for Monday 12/01/2099. Fictitious data.
 const WHO = DEMO.member4;
@@ -109,7 +109,7 @@ test("reordering with the keyboard and with the mouse", async ({ page }) => {
 
   await page.getByRole("button", { name: "Descendre « A »" }).focus();
   await page.keyboard.press("Enter");
-  await expect.poll(() => titles(page)).toEqual(["B", "A", "C"]);
+  await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["B", "A", "C"]);
   await page.reload();
   await expect.poll(() => titles(page)).toEqual(["B", "A", "C"]);
 
@@ -127,7 +127,11 @@ test("reordering with the keyboard and with the mouse", async ({ page }) => {
   await page.mouse.move(x, to.y + to.height * 0.25, { steps: 25 });
   await page.waitForTimeout(200);
   await page.mouse.up();
+  await page.waitForTimeout(500);
+  const alert = page.getByRole("main").getByRole("alert");
+  if ((await alert.count()) > 0) throw new Error(`Server refused: ${await alert.innerText()}`);
   await expect.poll(() => titles(page)).toEqual(["C", "B", "A"]);
+  await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["C", "B", "A"]);
   await page.reload();
   await expect.poll(() => titles(page)).toEqual(["C", "B", "A"]);
 });
@@ -144,6 +148,8 @@ test("deleting asks for confirmation and compacts the priorities", async ({ page
   await page.getByRole("button", { name: "Supprimer « Deux »" }).click();
   await confirm.getByRole("button", { name: "Supprimer", exact: true }).click();
   await expect.poll(() => titles(page)).toEqual(["Un", "Trois"]);
+  // Compacted in the database: « Trois » is now priority 2 (no « Trois#3 »).
+  await expect.poll(() => storedTopicTitles(WHO, OPEN_MEETING)).toEqual(["Un", "Trois"]);
   await page.reload();
   await expect(list(page).getByRole("listitem")).toHaveCount(2);
   await expect(list(page).getByRole("listitem").nth(1)).toContainText("Trois");

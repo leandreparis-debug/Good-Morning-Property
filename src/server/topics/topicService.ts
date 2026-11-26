@@ -27,6 +27,13 @@ export async function createTopic(input: TopicInput): Promise<Topic[]> {
   const { member, meeting } = await requireOpenEntry();
   const current = await listMemberTopics(meeting.id, member.id);
   if (current.length >= MAX_TOPICS) throw new DomainError("TOPICS_LIMIT_REACHED");
+  // Close any gap first (e.g. a deletion whose compaction was interrupted), so that
+  // « count + 1 » is always a free priority.
+  if (!isCompact(current))
+    await callReorder(
+      meeting.id,
+      current.map((topic) => topic.id),
+    );
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("topics").insert({
