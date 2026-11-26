@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { getInitials } from "@/lib/initials";
 import type { MemberColor } from "@/lib/memberColors";
@@ -13,7 +14,10 @@ export interface MemberAvatarProps {
   initials?: string;
   color?: MemberColor;
   size?: MemberAvatarSize;
-  /** `current`: white 4 px ring then ink 2 px ring · `done`: 45 % opacity. */
+  /**
+   * `current`: white 4 px ring then ink 2 px ring · `done`: `mist` background, `ink-soft`
+   * initials and a small check (AA contrast, whatever the member's colour).
+   */
   status?: MemberStatus;
   className?: string;
 }
@@ -58,14 +62,22 @@ export function MemberAvatar({
       data-status={status}
       className={cn(
         "inline-grid shrink-0 place-items-center rounded-full font-bold select-none",
-        colorClasses[color],
         sizeClasses[size],
+        "relative",
+        status === "done" ? "border border-line bg-mist text-ink-soft" : colorClasses[color],
         status === "current" && "shadow-[0_0_0_4px_var(--color-card),0_0_0_6px_var(--color-ink)]",
-        status === "done" && "opacity-45",
         className,
       )}
     >
       <span aria-hidden>{initials ?? getInitials(name)}</span>
+      {status === "done" && (
+        <span
+          aria-hidden
+          className="absolute -right-0.5 -bottom-0.5 grid size-[38%] min-h-3.5 min-w-3.5 place-items-center rounded-full bg-hill text-white ring-2 ring-card"
+        >
+          <Check className="size-[70%]" strokeWidth={3} />
+        </span>
+      )}
     </span>
   );
 }

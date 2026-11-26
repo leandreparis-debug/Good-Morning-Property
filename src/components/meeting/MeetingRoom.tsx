@@ -271,7 +271,6 @@ function SetupStep({
                       name={member.displayName}
                       initials={member.initials}
                       color={member.avatarColor}
-                      status={checked ? "idle" : "done"}
                     />
                     <span className={cn("font-semibold", !checked && "text-ink-soft line-through")}>
                       {member.displayName}
