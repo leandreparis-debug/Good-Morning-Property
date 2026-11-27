@@ -15,6 +15,8 @@ import { bootstrapFacilitator } from "@/server/team/teamService";
 
 async function main(): Promise<void> {
   const { values } = parseArgs({
+    // pnpm forwards the `--` of `pnpm <script> -- --flag`: drop it, or every flag is a positional.
+    args: process.argv.slice(2).filter((arg, index) => !(index === 0 && arg === "--")),
     options: {
       name: { type: "string" },
       initials: { type: "string" },
