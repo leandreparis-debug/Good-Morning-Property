@@ -69,3 +69,10 @@ Full suite green in CI (`ci`, `database`, `e2e`); security review in `docs/secur
 `server-only` on every server module, tokens never logged, RLS everywhere, fake clock off in
 production); `pnpm audit` clean thanks to a `postcss` override; `docs/deploy.md` step by step for
 Léandre; final README. Attention: the repository's default branch must be set to `main`.
+
+## Go-live (2026-11-27)
+
+At the user's request, Claude did the go-live: Supabase project `good-morning-property` (eu-west-3,
+6 migrations, no seed), Vercel project `good-morning-property` (team Carrefour Property, `main`,
+Node 22, Vercel Authentication off), first animateur created with the bootstrap script.
+Production: <https://good-morning-property.vercel.app>. Still to do by hand: disable sign-ups.
