@@ -172,7 +172,7 @@ export function TeamBoard({
         {notice}
       </p>
 
-      <ul className="grid gap-4 md:grid-cols-2">
+      <ul className="grid items-start gap-4 md:grid-cols-2">
         {[...active, ...inactive].map((member) => {
           const isMe = member.id === currentMemberId;
           return (

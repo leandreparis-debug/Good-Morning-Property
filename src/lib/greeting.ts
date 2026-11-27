@@ -13,6 +13,16 @@ export function firstName(displayName: string): string {
 }
 
 /**
+ * First name, or the full display name when another of `names` has the same first name
+ * (« Suivant : Membre » would be ambiguous).
+ */
+export function distinctFirstName(displayName: string, names: readonly string[]): string {
+  const first = firstName(displayName);
+  const clash = names.some((name) => name !== displayName && firstName(name) === first);
+  return clash ? displayName : first;
+}
+
+/**
  * « Bon week-end, *Prénom* » from Friday 12:00 to Sunday 23:59 (Paris time),
  * « Bon*jour*, Prénom » otherwise.
  */

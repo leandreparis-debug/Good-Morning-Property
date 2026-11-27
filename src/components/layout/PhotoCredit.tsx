@@ -6,14 +6,15 @@ import { isProjectionPath } from "@/lib/routes";
 
 /**
  * Discreet photo credit, bottom right on a 70 % white pill.
- * Hidden in projection mode (meeting screen); sits above the bottom nav on mobile.
+ * Hidden in projection mode (meeting screen). On mobile it sits at the end of the page, above
+ * the bottom nav, so it never covers content; fixed bottom right from `sm`.
  */
 export function PhotoCredit() {
   const pathname = usePathname();
   if (isProjectionPath(pathname)) return null;
 
   return (
-    <p className="pointer-events-none fixed right-3 bottom-24 z-10 sm:right-4 sm:bottom-4">
+    <p className="pointer-events-none flex justify-end px-4 pb-24 sm:fixed sm:right-4 sm:bottom-4 sm:z-10 sm:p-0">
       <a
         href={BACKGROUND_CREDIT.url}
         target="_blank"

@@ -11,7 +11,7 @@ import { TopicTag } from "@/components/ui/TopicTag";
 import { playAlert } from "@/lib/beep";
 import { cn } from "@/lib/cn";
 import { formatDuration } from "@/lib/fillSummary";
-import { firstName } from "@/lib/greeting";
+import { distinctFirstName, firstName } from "@/lib/greeting";
 import { formatMeetingDateFr } from "@/lib/meetingCalendar";
 import {
   addTurnMinutes,
@@ -96,6 +96,7 @@ function TurnScreen({
   state: MeetingState;
   update: Update;
 }) {
+  const allNames = order.map((member) => member.displayName);
   const now = useNow(true);
   const view = timerView(state.timer, now);
   const speaker = order[state.turnIndex];
@@ -248,11 +249,13 @@ function TurnScreen({
                 update((current) => nextTurn(current, at));
               }}
             >
-              {isLast || !next ? "Passer aux visites" : `Suivant : ${firstName(next.displayName)}`}
+              {isLast || !next
+                ? "Passer aux visites"
+                : `Suivant : ${distinctFirstName(next.displayName, allNames)}`}
             </Button>
           </div>
 
-          <p className="text-base text-ink-soft">
+          <p className="self-start rounded-full bg-card/85 px-5 py-2.5 text-base text-ink backdrop-blur-sm">
             Raccourcis : <kbd className="font-semibold">Espace</kbd> pause / reprise ·{" "}
             <kbd className="font-semibold">→</kbd> suivant · <kbd className="font-semibold">1</kbd>,{" "}
             <kbd className="font-semibold">2</kbd>, <kbd className="font-semibold">4</kbd> ajouter
@@ -323,6 +326,7 @@ function VisitsScreen({
   state: MeetingState;
   update: Update;
 }) {
+  const allNames = order.map((member) => member.displayName);
   const member = order[state.visitIndex];
   const next = order[state.visitIndex + 1];
   if (!member) return null;
@@ -386,7 +390,9 @@ function VisitsScreen({
             update((current) => moveVisit(current, 1, Date.now()));
           }}
         >
-          {next ? `Suivant : ${firstName(next.displayName)}` : "Terminer la réunion"}
+          {next
+            ? `Suivant : ${distinctFirstName(next.displayName, allNames)}`
+            : "Terminer la réunion"}
         </Button>
       </div>
     </div>

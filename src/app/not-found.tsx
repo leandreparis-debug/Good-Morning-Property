@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { DisplayTitle } from "@/components/ui/DisplayTitle";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ROUTES } from "@/lib/routes";
+
+export const metadata: Metadata = { title: "Page introuvable" };
 
 export default function NotFound() {
   return (

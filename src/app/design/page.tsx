@@ -217,7 +217,8 @@ export default function DesignPage() {
             <MemberAvatar name="Emma Leroy" color="ink" size="sm" />
           </div>
           <p className="text-sm text-ink-soft">
-            États : en cours (anneau blanc puis anneau encre), déjà passé (opacité 45 %).
+            États : en cours (anneau blanc puis anneau encre), déjà passé (fond brume, initiales
+            encre douce et coche).
           </p>
         </Card>
       </Section>

@@ -44,14 +44,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" className={`${instrumentSerif.variable} ${interTight.variable}`}>
-      <body>
+      <body className="group/page">
         <SkipLink />
         <SkyBackground />
         <SiteHeader />
         <main
           id="contenu"
           tabIndex={-1}
-          className="mx-auto w-full max-w-6xl px-4 pt-8 pb-32 outline-none sm:px-6 sm:pt-12 sm:pb-24"
+          className="mx-auto w-full max-w-6xl px-4 pt-8 pb-8 outline-none has-[[data-projection]]:max-w-[1760px] has-[[data-projection]]:pb-32 sm:px-6 sm:pt-12 sm:pb-24"
         >
           {children}
         </main>

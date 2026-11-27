@@ -111,7 +111,10 @@ export function Wheel({
                 <text
                   x={lx}
                   y={ly}
-                  transform={members.length === 1 ? undefined : `rotate(${mid} ${lx} ${ly})`}
+                  transform={
+                    // Radial labels: the drawn slice stops under the pointer, upright.
+                    members.length === 1 ? undefined : `rotate(${mid} ${lx} ${ly})`
+                  }
                   textAnchor="middle"
                   dominantBaseline="middle"
                   fontSize={fontSize}

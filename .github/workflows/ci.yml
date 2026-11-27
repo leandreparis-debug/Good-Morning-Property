@@ -90,8 +90,19 @@ jobs:
       - name: Install Playwright (Chromium)
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: E2E tests
+      - name: E2E tests (+ reference screenshots of fictitious data)
         run: pnpm test:e2e
+        env:
+          SCREENSHOTS: "1"
+
+      - name: Upload reference screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: docs/screenshots/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload Playwright report
         if: failure()

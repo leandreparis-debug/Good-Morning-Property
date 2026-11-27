@@ -19,11 +19,13 @@ describe("MemberAvatar", () => {
     );
   });
 
-  it("done status is faded", () => {
-    render(<MemberAvatar name="Chloé Bernard" status="done" />);
-    expect(screen.getByRole("img", { name: "Chloé Bernard, déjà passé" })).toHaveClass(
-      "opacity-45",
-    );
+  it("done status uses mist and ink-soft with a check, never opacity", () => {
+    const { container } = render(<MemberAvatar name="Chloé Bernard" color="ink" status="done" />);
+    const avatar = screen.getByRole("img", { name: "Chloé Bernard, déjà passé" });
+    expect(avatar).toHaveClass("bg-mist", "text-ink-soft");
+    expect(avatar).not.toHaveClass("opacity-45");
+    expect(avatar).not.toHaveClass("bg-ink");
+    expect(container.querySelector("svg")).not.toBeNull();
   });
 
   it("uses white text on ink", () => {
