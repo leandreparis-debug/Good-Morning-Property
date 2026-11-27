@@ -23,14 +23,19 @@ export async function SiteHeader() {
 
   return (
     <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 pt-4 sm:px-6 sm:pt-6">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-        <Link href={ROUTES.home} className="inline-flex min-h-11 items-center rounded-2xl text-ink">
-          <Logo withWordmark />
-        </Link>
-        {member && <MeetingStatusPill phase={getMeetingPhase(current)} now={current} />}
-      </div>
+      <Link
+        href={ROUTES.home}
+        className="order-1 inline-flex min-h-11 items-center rounded-2xl text-ink"
+      >
+        <Logo withWordmark />
+      </Link>
       {member && (
-        <div className="flex items-center gap-3">
+        <div className="order-3 w-full sm:order-2 sm:mr-auto sm:w-auto">
+          <MeetingStatusPill phase={getMeetingPhase(current)} now={current} />
+        </div>
+      )}
+      {member && (
+        <div className="order-2 flex items-center gap-3 sm:order-3">
           <MainNav showTeam={member.isFacilitator} />
           <MemberMenu
             displayName={member.displayName}

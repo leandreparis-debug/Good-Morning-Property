@@ -252,7 +252,7 @@ function TurnScreen({
             </Button>
           </div>
 
-          <p className="text-base text-ink-soft">
+          <p className="self-start rounded-full bg-card/85 px-5 py-2.5 text-base text-ink backdrop-blur-sm">
             Raccourcis : <kbd className="font-semibold">Espace</kbd> pause / reprise ·{" "}
             <kbd className="font-semibold">→</kbd> suivant · <kbd className="font-semibold">1</kbd>,{" "}
             <kbd className="font-semibold">2</kbd>, <kbd className="font-semibold">4</kbd> ajouter

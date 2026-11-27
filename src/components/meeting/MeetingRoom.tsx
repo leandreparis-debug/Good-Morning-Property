@@ -122,7 +122,7 @@ export function MeetingRoom(props: MeetingRoomProps) {
   const stepIndex = state.step === "setup" ? 0 : state.step === "turns" ? 1 : 2;
 
   return (
-    <div className="flex flex-col gap-8" data-restored={restored}>
+    <div className="flex flex-col gap-8" data-restored={restored} data-projection>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <nav aria-label="Étapes de la réunion">
           <ol className="flex flex-wrap gap-2">
@@ -210,12 +210,13 @@ function SetupStep({
 
   const byId = useMemo(() => new Map(members.map((member) => [member.id, member])), [members]);
   const present = members.filter((member) => state.present.includes(member.id));
-  // First names on the slices, unless two present members share one.
+  // First names on the slices; initials when two present members share one (full names
+  // would not fit on a slice).
   const firstNames = present.map((member) => firstName(member.displayName));
   const wheelMembers = present.map((member, index) => {
     const first = firstNames[index] ?? member.displayName;
     const shared = firstNames.filter((name) => name === first).length > 1;
-    return { id: member.id, label: shared ? member.displayName : first, color: member.avatarColor };
+    return { id: member.id, label: shared ? member.initials : first, color: member.avatarColor };
   });
 
   // An order restored from storage is shown at once.
@@ -237,7 +238,7 @@ function SetupStep({
   });
 
   return (
-    <div className="grid gap-8 xl:grid-cols-[minmax(0,26rem)_1fr]">
+    <div className="grid gap-8 xl:grid-cols-[minmax(0,36rem)_1fr]">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <Eyebrow tone="sky" size="projection">
