@@ -54,7 +54,7 @@ test("adding up to 5 topics, then the button is disabled", async ({ page }) => {
   await expect(page.getByRole("tab", { name: "Sujets 5/5" })).toBeVisible();
   await expect(list(page).getByText("Pour décision")).toBeVisible();
   await page.reload();
-  expect(await titles(page)).toEqual([1, 2, 3, 4, 5].map((i) => `Sujet fictif ${i}`));
+  await expect.poll(() => titles(page)).toEqual([1, 2, 3, 4, 5].map((i) => `Sujet fictif ${i}`));
 });
 
 test("a 6th topic is refused by the server", async ({ page, context }) => {
