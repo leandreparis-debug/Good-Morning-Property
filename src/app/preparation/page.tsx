@@ -71,7 +71,7 @@ export default async function PreparationPage() {
         <h2 id="who-filled" className="font-display text-4xl">
           Qui a rempli
         </h2>
-        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
           {active.map((member) => {
             const memberCounts = counts.get(member.id) ?? EMPTY;
             const memberTopics = topics.filter((topic) => topic.memberId === member.id);
