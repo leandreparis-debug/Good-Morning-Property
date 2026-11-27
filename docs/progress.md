@@ -62,3 +62,10 @@ skeleton, French error page, 404 title; breakpoints 390–1920, unique titles; r
 Visual QA from CI screenshots: full-width projection, readable shortcuts, initials on the wheel
 when first names clash, mobile header and static credit. Attention: overtime text is ink on ember.
 Merged: [PR #11](https://github.com/leandreparis-debug/Good-Morning-Property/pull/11).
+
+## J · Checks and go-live preparation
+
+Full suite green in CI (`ci`, `database`, `e2e`); security review in `docs/security.md` (headers,
+`server-only` on every server module, tokens never logged, RLS everywhere, fake clock off in
+production); `pnpm audit` clean thanks to a `postcss` override; `docs/deploy.md` step by step for
+Léandre; final README. Attention: the repository's default branch must be set to `main`.

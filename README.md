@@ -1,11 +1,26 @@
 # Good Morning Property
 
-Application web qui anime le point hebdomadaire d'une équipe de cinq personnes, le lundi à 11 h :
-préparation courte (5 sujets maximum, tagués et priorisés), tirage au sort de l'ordre de passage,
-temps de parole chronométré, tour des visites et déplacements. Rien n'est conservé après la réunion.
+Application web qui anime le **point hebdomadaire d'une équipe de cinq personnes**, le lundi à
+11 h. Fini le tour de table des tâches de la semaine passée : chacun prépare l'essentiel, la
+réunion est projetée, chronométrée, et rien n'est conservé après.
 
-Pas de mot de passe ni de mail : chaque membre entre avec son **lien personnel**, que
-l'animateur crée et lui transmet depuis l'écran Équipe (`docs/auth.md`).
+| Saisie (mobile)                                       | Préparation                                      | Réunion projetée                                     |
+| ----------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------- |
+| ![Mes sujets](docs/screenshots/mes-sujets-mobile.png) | ![Préparation](docs/screenshots/preparation.png) | ![Tour de parole](docs/screenshots/reunion-tour.png) |
+
+_Captures réalisées avec des données fictives._
+
+## Fonctionnement en 5 lignes
+
+1. **Du mardi au lundi 10 h** (heure de Paris), chacun saisit jusqu'à **5 sujets** priorisés et
+   tagués (info, échange, décision, alerte) et ses **visites et déplacements** de la semaine.
+2. Avant la réunion, chacun ne voit que ses saisies ; tout le monde voit **qui a rempli** ; seul le
+   **responsable** voit le contenu de tous.
+3. Le lundi, l'**animateur** projette `/reunion` : présents, **roue** pour l'ordre de passage,
+   **10 minutes** par personne (+1/+2/+4), alerte visuelle et sonore sans couper la parole.
+4. La réunion se termine par le **tour des visites**. **Rien n'est enregistré** après.
+5. **Aucun mail** : chacun entre avec son **lien personnel**, créé et transmis par l'animateur
+   depuis l'écran Équipe.
 
 ## Prérequis
 
@@ -17,42 +32,65 @@ l'animateur crée et lui transmet depuis l'écran Équipe (`docs/auth.md`).
 
 ```bash
 corepack enable
-pnpm install
-pnpm db:start && pnpm db:reset        # Supabase local + données fictives
-cp .env.example .env.local            # puis coller les valeurs de `pnpm db:env`
-pnpm dev
-pnpm local:link -- --email membre1@example.test   # lien de connexion d'un membre fictif
 ```
 
-Puis ouvrir <http://localhost:3000> (redirige vers `/mes-sujets`) et <http://localhost:3000/design>.
+```bash
+pnpm install
+```
+
+```bash
+pnpm db:start && pnpm db:reset
+```
+
+```bash
+cp .env.example .env.local
+```
+
+Colle dans `.env.local` les valeurs affichées par `pnpm db:env`, puis :
+
+```bash
+pnpm dev
+```
+
+```bash
+pnpm local:link -- --email membre1@example.test
+```
+
+Ouvre le lien affiché : tu es connecté comme « Membre Démo 1 » (animateur, données fictives).
 
 ## Commandes
 
-| Commande                       | Rôle                                                         |
-| ------------------------------ | ------------------------------------------------------------ |
-| `pnpm dev`                     | serveur de développement                                     |
-| `pnpm build` / `pnpm start`    | build de production / serveur de production                  |
-| `pnpm lint`                    | ESLint (Next + typescript-eslint strict)                     |
-| `pnpm typecheck`               | TypeScript sans émission                                     |
-| `pnpm format` / `format:check` | Prettier (+ tri des classes Tailwind)                        |
-| `pnpm test` / `test:watch`     | tests unitaires Vitest                                       |
-| `pnpm test:e2e`                | tests Playwright + axe sur le build (`pnpm build` avant)     |
-| `pnpm check`                   | lint + typecheck + tests unitaires                           |
-| `pnpm optimize:background`     | régénère le flou de la photo de fond (ré-encode si > 600 Ko) |
-
-Première exécution des tests e2e en local : `pnpm exec playwright install chromium`.
+| Commande                                                         | Rôle                                                     |
+| ---------------------------------------------------------------- | -------------------------------------------------------- |
+| `pnpm dev`                                                       | serveur de développement                                 |
+| `pnpm build` / `pnpm start`                                      | build et serveur de production                           |
+| `pnpm check`                                                     | lint + typecheck + tests unitaires (Vitest)              |
+| `pnpm test:db`                                                   | tests de la base (pgTAP, Supabase local)                 |
+| `pnpm test:integration`                                          | tests d'intégration Vitest contre Supabase local         |
+| `pnpm test:e2e`                                                  | tests Playwright + axe sur le build (`pnpm build` avant) |
+| `pnpm format` / `format:check`                                   | Prettier (+ tri des classes Tailwind)                    |
+| `pnpm db:start` / `db:stop` / `db:reset` / `db:types` / `db:env` | Supabase local                                           |
+| `pnpm local:link -- --email …`                                   | lien personnel d'un membre du seed (local uniquement)    |
+| `pnpm bootstrap:facilitator -- --name "…"`                       | premier animateur d'une base vide                        |
+| `pnpm optimize:background`                                       | flou de chargement de la photo de fond                   |
 
 ## Documentation
 
-- `CLAUDE.md` : contexte, conventions et règles absolues du projet
-- `docs/design.md` : direction artistique « Prairie du matin »
-- `docs/architecture.md` : structure et règles de dépendance
-- `docs/auth.md` : liens personnels et écran Équipe
-- `docs/data-model.md`, `docs/local-dev.md` : base de données, Supabase local
-- `docs/progress.md` : avancement par phase
+- [`CLAUDE.md`](CLAUDE.md) : contexte, conventions et règles absolues
+- [`docs/deploy.md`](docs/deploy.md) : **mise en ligne pas à pas**
+- [`docs/auth.md`](docs/auth.md) : liens personnels et écran Équipe
+- [`docs/calendar.md`](docs/calendar.md) : calendrier de réunion (heure de Paris)
+- [`docs/entries.md`](docs/entries.md), [`docs/preparation.md`](docs/preparation.md),
+  [`docs/meeting.md`](docs/meeting.md) : écrans
+- [`docs/data-model.md`](docs/data-model.md), [`docs/local-dev.md`](docs/local-dev.md) : base de
+  données, RLS, Supabase local
+- [`docs/design.md`](docs/design.md) : direction artistique « Prairie du matin », accessibilité
+- [`docs/architecture.md`](docs/architecture.md), [`docs/security.md`](docs/security.md)
+- [`docs/progress.md`](docs/progress.md) : avancement par phase
 
 ## Crédits
 
 Photo de fond : « Rolling green hills under a bright, blue sky », **Spencer DeMera** sur
 [Unsplash](https://unsplash.com/photos/q0lB6w0z6Ns), licence Unsplash.
-Polices : Instrument Serif et Inter Tight (SIL Open Font License), hébergées dans `src/app/fonts/` (licence dans `OFL.txt`).
+Polices : Instrument Serif et Inter Tight (SIL Open Font License), hébergées dans
+`src/app/fonts/` (licence dans `OFL.txt`).
