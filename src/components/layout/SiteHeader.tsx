@@ -22,7 +22,7 @@ export async function SiteHeader() {
     : [];
 
   return (
-    <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 pt-4 sm:px-6 sm:pt-6">
+    <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 pt-4 group-has-[[data-projection]]/page:max-w-[1760px] sm:px-6 sm:pt-6">
       <Link
         href={ROUTES.home}
         className="order-1 inline-flex min-h-11 items-center rounded-2xl text-ink"

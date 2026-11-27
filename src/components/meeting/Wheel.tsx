@@ -111,7 +111,12 @@ export function Wheel({
                 <text
                   x={lx}
                   y={ly}
-                  transform={members.length === 1 ? undefined : `rotate(${mid} ${lx} ${ly})`}
+                  transform={
+                    members.length === 1
+                      ? undefined
+                      : // Labels on the lower half are turned over so they never read upside down.
+                        `rotate(${mid > 90 && mid < 270 ? mid + 180 : mid} ${lx} ${ly})`
+                  }
                   textAnchor="middle"
                   dominantBaseline="middle"
                   fontSize={fontSize}

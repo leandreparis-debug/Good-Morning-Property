@@ -44,7 +44,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" className={`${instrumentSerif.variable} ${interTight.variable}`}>
-      <body>
+      <body className="group/page">
         <SkipLink />
         <SkyBackground />
         <SiteHeader />

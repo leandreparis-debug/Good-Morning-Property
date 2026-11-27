@@ -28,7 +28,8 @@ test("wheel and turn screen", async ({ page }) => {
   await expect(page.locator("[data-restored='true']")).toBeVisible();
   await page.getByRole("button", { name: "Lancer la roue" }).click();
   await expect(page.getByRole("list", { name: "Ordre de passage" })).toBeVisible();
-  await page.screenshot({ path: `${DIR}/reunion-roue.png` });
+  await page.mouse.move(0, 0);
+  await page.screenshot({ path: `${DIR}/reunion-roue.png`, animations: "disabled" });
 
   await page.getByRole("button", { name: "Commencer les tours" }).click();
   await page.clock.runFor("03:18");

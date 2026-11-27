@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { firstName, greetingFor } from "./greeting";
+import { distinctFirstName, firstName, greetingFor } from "./greeting";
 
 describe("greetingFor", () => {
   it.each([
@@ -18,5 +18,17 @@ describe("firstName", () => {
   it("keeps the first word", () => {
     expect(firstName("  Membre Démo 3 ")).toBe("Membre");
     expect(firstName("Inès")).toBe("Inès");
+  });
+});
+
+describe("distinctFirstName", () => {
+  it("keeps the first name when it is unique", () => {
+    expect(distinctFirstName("Alice Martin", ["Alice Martin", "Bruno Petit"])).toBe("Alice");
+  });
+
+  it("falls back to the full name when first names clash", () => {
+    expect(distinctFirstName("Membre Démo 2", ["Membre Démo 1", "Membre Démo 2"])).toBe(
+      "Membre Démo 2",
+    );
   });
 });
