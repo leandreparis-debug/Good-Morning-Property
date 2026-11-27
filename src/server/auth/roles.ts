@@ -1,3 +1,4 @@
+import "server-only";
 import type { Member } from "@/server/repositories/members";
 
 /** App roles. `member` = any active member. */

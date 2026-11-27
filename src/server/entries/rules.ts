@@ -1,3 +1,4 @@
+import "server-only";
 import { DomainError } from "@/server/errors";
 
 /** True while `now` is before the deadline stored on the meeting. */

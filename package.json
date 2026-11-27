@@ -82,7 +82,8 @@
       "unrs-resolver"
     ],
     "overrides": {
-      "playwright-core": "1.63.0"
+      "playwright-core": "1.63.0",
+      "postcss@<8.5.23": ">=8.5.23"
     }
   }
 }
